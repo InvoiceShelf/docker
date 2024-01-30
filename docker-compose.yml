@@ -1,0 +1,81 @@
+#-------------------------------------------
+#  Docker Compose
+#  - Darko Gjorgjijoski
+# Repo : https://github.com/InvoiceShelf/docker
+#-------------------------------------------
+
+version: '3'
+
+services:
+  invoiceshelf_db:
+    container_name: invoiceshelf_db
+    image: mariadb:10
+    environment:
+      - MYSQL_ROOT_PASSWORD=<ROOT_PASSWORD>
+      - MYSQL_DATABASE=invoiceshelf
+      - MYSQL_USER=invoiceshelf
+      - MYSQL_PASSWORD=<INVOICESHELF_PASSWORD>
+    expose: 
+      - 3306
+    volumes:
+      - mysql:/var/lib/mysql
+    networks:
+      - invoiceshelf
+    restart: unless-stopped
+
+  invoiceshelf:
+    image: invoiceshelf/invoiceshelf
+    container_name: invoiceshelf
+    ports:
+      - 90:80
+    volumes:
+      - ./invoiceshelf/logs:/logs
+    networks:
+      - invoiceshelf
+    environment:
+      #- PUID=1000
+      #- PGID=1000
+      # PHP timezone e.g. PHP_TZ=America/New_York
+      - PHP_TZ=UTC
+      - TIMEZONE=UTC
+      #- APP_NAME=Laravel
+      #- APP_ENV=local
+      #- APP_FORCE_HTTPS=false
+      #- APP_DEBUG=true
+      #- APP_URL=http://localhost
+      - DB_CONNECTION=mysql
+      - DB_HOST=invoiceshelf_db
+      - DB_PORT=3306
+      - DB_DATABASE=invoiceshelf
+      - DB_USERNAME=invoiceshelf
+      - DB_PASSWORD=<INVOICESHELF_PASSWORD>
+      #- DB_PASSWORD_FILE=<filename>
+      #- DB_OLD_INVOICESHELF_PREFIX=''
+      #- CACHE_DRIVER=file
+      #- SESSION_DRIVER=file
+      #- SESSION_LIFETIME=120
+      #- SECURITY_HEADER_HSTS_ENABLE=false
+      #- REDIS_HOST=127.0.0.1
+      #- REDIS_PASSWORD=null
+      #- REDIS_PASSWORD_FILE=<filename>
+      #- REDIS_PORT=6379
+      #- MAIL_DRIVER=smtp
+      #- MAIL_HOST=smtp.mailtrap.io
+      #- MAIL_PORT=2525
+      #- MAIL_USERNAME=null
+      #- MAIL_PASSWORD=null
+      #- MAIL_PASSWORD_FILE=<filename>
+      #- MAIL_ENCRYPTION=null
+      - STARTUP_DELAY=30
+      # - ADMIN_USER=admin
+      # - ADMIN_PASSWORD=<ADMIN_PASSWORD>
+      # - ADMIN_PASSWORD_FILE=<filename>
+    restart: unless-stopped
+    depends_on:
+      - invoiceshelf_db
+
+networks:
+  invoiceshelf:
+
+volumes:
+  mysql:

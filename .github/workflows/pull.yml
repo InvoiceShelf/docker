@@ -1,0 +1,62 @@
+name: Build Pull Request
+
+on:
+  pull_request:
+    paths-ignore:
+      - 'README.md'
+
+env:
+  PUID: '1000'
+  PGID: '1000'
+  PHP_TZ: 'UTC'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v3.0.0
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.0.0
+      -
+        name: Test multiarch building
+        uses: docker/build-push-action@v5.1.0
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm/v7,linux/arm64
+          load: false
+          push: false
+          tags: |
+            invoiceshelf/invoiceshelf:testing-${{ github.run_id }}
+      -
+        name: Save amd64 image to pass to testing
+        uses: docker/build-push-action@v5.1.0
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          load: true
+          push: false
+          tags: |
+            invoiceshelf/invoiceshelf:testing-${{ github.run_id }}
+      -
+        name: Export Image and PR Number
+        run: |
+          mkdir -p ./artifact
+          docker image save -o ./artifact/invoiceshelf.tar invoiceshelf/invoiceshelf:testing-${{ github.run_id }}
+          echo "${{ github.event.number }}" > ./artifact/pr
+          echo "${{ github.sha }}" > ./artifact/sha
+          echo -e "PR: ${{ github.event.number }}\nSHA: ${{ github.sha }}\nBase ref: ${{ github.base_ref }}\nHead ref: ${{ github.head_ref }}"
+          sha256sum artifact/invoiceshelf.tar || echo 0
+      -
+        name: Store as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifact
+          path: ./artifact
