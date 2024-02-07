@@ -85,9 +85,8 @@ RUN mkdir -p  /app
 WORKDIR /app
 COPY --from=base /var/www/html/InvoiceShelf /app
 
-RUN \
-    npm install \
-    npm run build
+RUN npm install
+RUN yarn build
 
 # Get the static assets built in the previous step
 FROM base
