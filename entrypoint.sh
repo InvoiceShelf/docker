@@ -30,6 +30,7 @@ echo "**** Create the symbolic link for the /logs folder ****"
 	touch /var/www/html/InvoiceShelf/storage/logs/empty_file && \
 	cp -r /var/www/html/InvoiceShelf/storage/logs/* /logs && \
 	rm -r /var/www/html/InvoiceShelf/storage/logs && \
+	ln -s /logs /var/www/html/InvoiceShelf/storage/logs
 
 cd /var/www/html/InvoiceShelf
 
@@ -63,8 +64,16 @@ if [ -n "$SKIP_PERMISSIONS_CHECKS" ] && [ "${SKIP_PERMISSIONS_CHECKS,,}" = "yes"
 	echo "**** WARNING: Skipping permissions check ****"
 else
 	echo "**** Set Permissions ****"
-	chmod 755 /var/www/html/InvoiceShelf/storage/framework
+  if [ ! -d "/var/www/html/InvoiceShelf/storage/framework" ]
+  then
+    mkdir -p /var/www/html/InvoiceShelf/storage/framework
+  fi
+	if [ ! -d "/var/www/html/InvoiceShelf/storage/cache" ]
+	then
+	  mkdir -p /var/www/html/InvoiceShelf/storage/cache
+	fi
 	chmod 755 /var/www/html/InvoiceShelf/storage/logs
+	chmod 755 /var/www/html/InvoiceShelf/storage/framework
 	chmod 755 /var/www/html/InvoiceShelf/storage/cache
 	# Set ownership of directories, then files and only when required. See InvoiceShelf/InvoiceShelf-Docker#120
 	find /conf/.env  /logs \( ! -user "$USER" -o ! -group "$USER" \) -exec chown "$USER":"$USER" \{\} \;
