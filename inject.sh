@@ -122,6 +122,12 @@ fi
 if [ "$TRUSTED_PROXIES" != '' ]; then
     sed -i "s|TRUSTED_PROXIES=.*|TRUSTED_PROXIES=${TRUSTED_PROXIES}|i" /conf/.env
 fi
+if [ "$SANCTUM_STATEFUL_DOMAINS" != '' ]; then
+    sed -i "s|SANCTUM_STATEFUL_DOMAINS=.*|SANCTUM_STATEFUL_DOMAINS=${SANCTUM_STATEFUL_DOMAINS}|i" /conf/.env
+fi
+if [ "$SESSION_DOMAIN" != '' ]; then
+    sed -i "s|SESSION_DOMAIN=.*|SESSION_DOMAIN=${SESSION_DOMAIN}|i" /conf/.env
+fi
 if [ "$PHP_TZ" != '' ]; then
     sed -i "s|;*date.timezone =.*|date.timezone = ${PHP_TZ}|i" /etc/php/8.2/cli/php.ini
     sed -i "s|;*date.timezone =.*|date.timezone = ${PHP_TZ}|i" /etc/php/8.2/fpm/php.ini
