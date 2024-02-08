@@ -72,9 +72,10 @@ else
 	then
 	  mkdir -p /var/www/html/InvoiceShelf/storage/cache
 	fi
-	chmod 755 /var/www/html/InvoiceShelf/storage/logs
-	chmod 755 /var/www/html/InvoiceShelf/storage/framework
-	chmod 755 /var/www/html/InvoiceShelf/storage/cache
+	chmod 775 /var/www/html/InvoiceShelf/storage/logs
+	chmod 775 /var/www/html/InvoiceShelf/storage/framework
+	chmod 775 /var/www/html/InvoiceShelf/storage/cache
+	chmod 775 /var/www/html/InvoiceShelf/bootstrap/cache
 	# Set ownership of directories, then files and only when required. See InvoiceShelf/InvoiceShelf-Docker#120
 	find /conf/.env  /logs \( ! -user "$USER" -o ! -group "$USER" \) -exec chown "$USER":"$USER" \{\} \;
 	# Laravel needs to be able to chmod user.css and custom.js for no good reason

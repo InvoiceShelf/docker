@@ -51,7 +51,8 @@ RUN \
     adduser --gecos '' --no-create-home --disabled-password --uid "$PUID" --gid "$PGID" "$USER" && \
     cd /var/www/html && \
     if [ "$TARGET" = "release" ] ; then RELEASE_TAG=$(curl -sX GET "https://api.github.com/repos/InvoiceShelf/InvoiceShelf/releases/latest" | awk '/tag_name/{print $4;exit}' FS='[""]'); fi && \
-    git clone --depth 1 $RELEASE_TAG https://github.com/InvoiceShelf/InvoiceShelf.git && \
+    if [ ! -z "$RELEASE_TAG" ] ; then RELEASE_TAG="--branch $RELEASE_TAG"; fi && \
+    git clone https://github.com/InvoiceShelf/InvoiceShelf.git $RELEASE_TAG --single-branch && \
     mv InvoiceShelf/.git/refs/heads/master InvoiceShelf/master || cp InvoiceShelf/.git/HEAD InvoiceShelf/master && \
     mv InvoiceShelf/.git/HEAD InvoiceShelf/HEAD && \
     rm -r InvoiceShelf/.git/* && \
