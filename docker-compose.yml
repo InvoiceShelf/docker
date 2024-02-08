@@ -55,6 +55,8 @@ services:
       #- SESSION_DRIVER=file
       #- SESSION_LIFETIME=120
       #- SECURITY_HEADER_HSTS_ENABLE=false
+      #- SANCTUM_STATEFUL_DOMAINS=
+      #- SESSION_DOMAIN=
       #- REDIS_HOST=127.0.0.1
       #- REDIS_PASSWORD=null
       #- REDIS_PASSWORD_FILE=<filename>
