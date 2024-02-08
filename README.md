@@ -80,7 +80,10 @@ alter user 'invoiceshelf' identified with mysql_native_password by '<your passwo
 
 ### Run with Docker Compose
 
-Change the environment variables in the [provided example](./docker-compose.yml) to reflect your database credentials.
+To run with `docker-compose` follow the steps:
+
+1. Copy the `docker-compose.yml.example` to `docker-compose.yml`
+2. Change the environment variables in the [provided example](./docker-compose.yml.example) to reflect your database credentials.
 
 Note that in order to avoid writing credentials directly into the file, you can create a `db_secrets.env` and use the `env_file` directive (see the [docs](https://docs.docker.com/compose/environment-variables/#the-env_file-configuration-option)).
 
