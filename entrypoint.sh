@@ -21,16 +21,23 @@ if [ -n "$STARTUP_DELAY" ]
 	sleep $STARTUP_DELAY
 fi
 
-echo "**** Make sure the /conf /logs folders exist ****"
-[ ! -d /conf ]    && mkdir -p /conf
-[ ! -d /logs ]    && mkdir -p /logs
+echo "**** Make sure the /conf folder exists ****"
+mkdir -p /conf
 
-echo "**** Create the symbolic link for the /logs folder ****"
-[ ! -L /var/www/html/InvoiceShelf/storage/logs ] && \
-	touch /var/www/html/InvoiceShelf/storage/logs/empty_file && \
-	cp -r /var/www/html/InvoiceShelf/storage/logs/* /logs && \
-	rm -r /var/www/html/InvoiceShelf/storage/logs && \
-	ln -s /logs /var/www/html/InvoiceShelf/storage/logs
+if [ -d /data ]
+then
+    echo "**** Discovered a /data folder. ****"
+    [ ! -L /var/www/html/InvoiceShelf/storage ] && \
+        echo "**** Moving everything from /var/www/html/InvoiceShelf/storage to the data folder ****"
+	cp -rn /var/www/html/InvoiceShelf/storage /data && \
+	rm -r /var/www/html/InvoiceShelf/storage && \
+	ln -s /data /var/www/html/InvoiceShelf/storage
+fi
+
+echo "**** make sure all needed directories in storage exist ****"
+mkdir -p /var/www/html/InvoiceShelf/storage/{logs,cache}
+mkdir -p /var/www/html/InvoiceShelf/storage/framework/{sessions,views,cache}
+
 
 cd /var/www/html/InvoiceShelf
 
@@ -42,11 +49,16 @@ echo "**** Copy the .env to /conf ****" && \
 echo "**** Inject .env values ****" && \
 	/inject.sh
 
-[ ! -e /tmp/first_run ] && \
-  chmod +x artisan
+
+APP_KEY=$(grep '^APP_KEY=' /conf/.env | cut -d'=' -f2-)
+EXAMPLE_KEY="base64:kgk/4DW1vEVy7aEvet5FPp5un6PIGe/so8H0mvoUtW0="
+
+if [ -z "$APP_KEY" ] || [ "$APP_KEY" = "$EXAMPLE_KEY"  ]
+then
+  chmod +x artisan && \
 	echo "**** Generate the key (to make sure that cookies cannot be decrypted etc) ****" && \
-	./artisan key:generate -n && \
-	touch /tmp/first_run
+	./artisan key:generate -n --force
+fi
 
 echo "**** Create user and use PUID/PGID ****"
 PUID=${PUID:-1000}
@@ -57,31 +69,23 @@ echo -e " \tUser UID :\t$(id -u "$USER")"
 echo -e " \tUser GID :\t$(id -g "$USER")"
 usermod -a -G "$USER" www-data
 
-echo "**** Make sure Laravel's log exists ****" && \
-touch /logs/laravel.log
 
 if [ -n "$SKIP_PERMISSIONS_CHECKS" ] && [ "${SKIP_PERMISSIONS_CHECKS,,}" = "yes" ] ; then
 	echo "**** WARNING: Skipping permissions check ****"
 else
 	echo "**** Set Permissions ****"
-  if [ ! -d "/var/www/html/InvoiceShelf/storage/framework" ]
-  then
-    mkdir -p /var/www/html/InvoiceShelf/storage/framework
-  fi
-	if [ ! -d "/var/www/html/InvoiceShelf/storage/cache" ]
-	then
-	  mkdir -p /var/www/html/InvoiceShelf/storage/cache
-	fi
-	chmod 775 /var/www/html/InvoiceShelf/storage/logs
-	chmod 775 /var/www/html/InvoiceShelf/storage/framework
-	chmod 775 /var/www/html/InvoiceShelf/storage/cache
-	chmod 775 /var/www/html/InvoiceShelf/bootstrap/cache
-	# Set ownership of directories, then files and only when required. See InvoiceShelf/InvoiceShelf-Docker#120
-	find /conf/.env  /logs \( ! -user "$USER" -o ! -group "$USER" \) -exec chown "$USER":"$USER" \{\} \;
-	# Laravel needs to be able to chmod user.css and custom.js for no good reason
-	find /logs/laravel.log \( ! -user "www-data" -o ! -group "$USER" \) -exec chown www-data:"$USER" \{\} \;
-	find /logs -type d \( ! -perm -ug+w -o ! -perm -ugo+rX -o ! -perm -g+s \) -exec chmod -R ug+w,ugo+rX,g+s \{\} \;
-	find /conf/.env /logs \( ! -perm -ug+w -o ! -perm -ugo+rX \) -exec chmod ug+w,ugo+rX \{\} \;
+  chmod 775 /var/www/html/InvoiceShelf/storage/logs
+  chmod 775 /var/www/html/InvoiceShelf/storage/framework
+  chmod 775 /var/www/html/InvoiceShelf/storage/cache
+  chmod 775 /var/www/html/InvoiceShelf/bootstrap/cache
+  # Set ownership of directories, then files and only when required. See InvoiceShelf/InvoiceShelf-Docker#120
+  find /conf/.env /var/www/html/InvoiceShelf/storage/ \
+    \( ! -user "$USER" -o ! -group "$USER" \) -exec chown "$USER":"$USER" \{\} \;
+  # Laravel needs to be able to chmod user.css and custom.js for no good reason
+  find /var/www/html/InvoiceShelf/storage/ \
+    -type d \( ! -perm -ug+w -o ! -perm -ugo+rX -o ! -perm -g+s \) -exec chmod -R ug+w,ugo+rX,g+s \{\} \;
+  find /conf/.env /var/www/html/InvoiceShelf/storage/ \
+    \( ! -perm -ug+w -o ! -perm -ugo+rX \) -exec chmod ug+w,ugo+rX \{\} \;
 fi
 
 # Update CA Certificates if we're using armv7 because armv7 is weird (#76)
