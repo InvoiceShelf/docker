@@ -29,7 +29,7 @@ services:
     ports:
       - 90:80
     volumes:
-      - ./invoiceshelf/logs:/logs
+      - ./invoiceshelf/data:/data
     networks:
       - invoiceshelf
     environment:
