@@ -86,6 +86,8 @@ else
     -type d \( ! -perm -ug+w -o ! -perm -ugo+rX -o ! -perm -g+s \) -exec chmod -R ug+w,ugo+rX,g+s \{\} \;
   find /conf/.env /var/www/html/InvoiceShelf/storage/ \
     \( ! -perm -ug+w -o ! -perm -ugo+rX \) -exec chmod ug+w,ugo+rX \{\} \;
+  chown -R www-data:www-data /var/www
+  chown -R www-data:www-data /data
 fi
 
 # Update CA Certificates if we're using armv7 because armv7 is weird (#76)
