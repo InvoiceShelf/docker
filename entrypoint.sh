@@ -29,7 +29,7 @@ then
     echo "**** Discovered a /data folder. ****"
     [ ! -L /var/www/html/InvoiceShelf/storage ] && \
         echo "**** Moving everything from /var/www/html/InvoiceShelf/storage to the data folder ****"
-	cp -rn /var/www/html/InvoiceShelf/storage /data && \
+	cp -rn /var/www/html/InvoiceShelf/storage/* /data && \
 	rm -r /var/www/html/InvoiceShelf/storage && \
 	ln -s /data /var/www/html/InvoiceShelf/storage
 fi
