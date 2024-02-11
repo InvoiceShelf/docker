@@ -97,7 +97,7 @@ COPY --from=static_builder --chown=www-data:www-data /app/public /var/www/html/I
 COPY default.conf /etc/nginx/nginx.conf
 
 EXPOSE 80
-VOLUME /conf /logs
+VOLUME /conf /data
 
 WORKDIR /var/www/html/InvoiceShelf
 
