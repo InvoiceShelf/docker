@@ -11,13 +11,14 @@ ENV PHP_TZ=UTC
 
 # Arguments
 # To use the latest InvoiceShelf release instead of master pass `--build-arg TARGET=release` to `docker build`
-ARG TARGET=dev
+ARG TARGET=nightly
 # To install composer development dependencies, pass `--build-arg COMPOSER_NO_DEV=0` to `docker build`
 ARG COMPOSER_NO_DEV=1
 
 # Install base dependencies, add user and group, clone the repo and install php libraries
 RUN \
     set -ev && \
+    [ "$TARGET" != "release" -o "$BRANCH" = "master" ] && \
     apt-get update && \
     apt-get upgrade -qy && \
     apt-get install -qy --no-install-recommends\
@@ -50,20 +51,19 @@ RUN \
     addgroup --gid "$PGID" "$USER" && \
     adduser --gecos '' --no-create-home --disabled-password --uid "$PUID" --gid "$PGID" "$USER" && \
     cd /var/www/html && \
-    if [ "$TARGET" = "release" ] ; then RELEASE_TAG=$(curl -sX GET "https://api.github.com/repos/InvoiceShelf/InvoiceShelf/releases/latest" | awk '/tag_name/{print $4;exit}' FS='[""]'); fi && \
-    if [ ! -z "$RELEASE_TAG" ] ; then RELEASE_TAG="$RELEASE_TAG"; fi && \
-    if [ -z "$RELEASE_TAG" ] ; then RELEASE_TAG="master"; fi && \
-    git clone https://github.com/InvoiceShelf/InvoiceShelf.git --branch $RELEASE_TAG --single-branch && \
-    mv InvoiceShelf/.git/refs/heads/master InvoiceShelf/master || cp InvoiceShelf/.git/HEAD InvoiceShelf/master && \
+    LATEST_VERSION=$(curl -sX GET "https://api.github.com/repos/InvoiceShelf/InvoiceShelf/releases/latest" | awk '/tag_name/{print $4;exit}' FS='[""]') \
+    if [ "$TARGET" = "release" ] ; then RELEASE_TAG="$LATEST_VERSION" ; fi && \
+    elif [ "$BRANCH" != "master" ] ; then RELEASE_TAG="$BRANCH" ; fi && \
+    git clone --depth 1 $RELEASE_TAG https://github.com/InvoiceShelf/InvoiceShelf.git && \
+    mv InvoiceShelf/.git/refs/heads/$BRANCH InvoiceShelf/$BRANCH || cp InvoiceShelf/.git/HEAD InvoiceShelf/$BRANCH && \
     mv InvoiceShelf/.git/HEAD InvoiceShelf/HEAD && \
     rm -r InvoiceShelf/.git/* && \
     mkdir -p InvoiceShelf/.git/refs/heads && \
     mv InvoiceShelf/HEAD InvoiceShelf/.git/HEAD && \
-    mv InvoiceShelf/master InvoiceShelf/.git/refs/heads/master && \
+    mv InvoiceShelf/$BRANCH InvoiceShelf/.git/refs/heads/$BRANCH && \
     echo "$TARGET" > /var/www/html/InvoiceShelf/docker_target && \
-    echo "$RELEASE_TAG" > /var/www/html/InvoiceShelf/version.md && \
     cd /var/www/html/InvoiceShelf && \
-    echo "Last release: $(cat version.md)" && \
+    echo "Last release: $LATEST_VERSION" && \
     composer install --prefer-dist && \
     find . -wholename '*/[Tt]ests/*' -delete && \
     find . -wholename '*/[Tt]est/*' -delete && \
