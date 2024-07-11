@@ -4,14 +4,19 @@ set -e
 
 # Read Last commit hash from .git
 # This prevents installing git, and allows display of commit
-read -r longhash < /var/www/html/InvoiceShelf/.git/refs/heads/master
+branch=$(ls /var/www/html/InvoiceShelf/.git/refs/heads)
+read -r longhash < "/var/www/html/InvoiceShelf/.git/refs/heads/$branch"
 shorthash=$(echo $longhash |cut -c1-7)
-invoiceshelfversion=$(</var/www/html/InvoiceShelf/version.md)
+if [ -f /var/www/html/InvoiceShelf/version.md ]; then
+  appversion=$(</var/www/html/InvoiceShelf/version.md)
+else
+  appversion='unknown'
+fi
 target=$(</var/www/html/InvoiceShelf/docker_target)
 
 echo "
 -------------------------------------
-InvoiceShelf Version: $invoiceshelfversion ($target)
+InvoiceShelf Version: $appversion ($target)
 InvoiceShelf Commit:  $shorthash
 https://github.com/InvoiceShelf/InvoiceShelf/commit/$longhash
 -------------------------------------"
