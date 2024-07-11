@@ -51,8 +51,8 @@ RUN \
     addgroup --gid "$PGID" "$USER" && \
     adduser --gecos '' --no-create-home --disabled-password --uid "$PUID" --gid "$PGID" "$USER" && \
     cd /var/www/html && \
-    LATEST_VERSION=$(curl -sX GET "https://api.github.com/repos/InvoiceShelf/InvoiceShelf/releases/latest" | awk '/tag_name/{print $4;exit}' FS='[""]') \
-    if [ "$TARGET" = "release" ] ; then RELEASE_TAG="$LATEST_VERSION" ; fi && \
+    LATEST_VERSION=$(curl -sX GET https://api.github.com/repos/InvoiceShelf/InvoiceShelf/releases/latest | awk '/tag_name/{print $4;exit}' FS='[""]') && \
+    if [ "$TARGET" = "release" ] ; then RELEASE_TAG="$LATEST_VERSION" ; \
     elif [ "$BRANCH" != "master" ] ; then RELEASE_TAG="$BRANCH" ; fi && \
     git clone --depth 1 $RELEASE_TAG https://github.com/InvoiceShelf/InvoiceShelf.git && \
     mv InvoiceShelf/.git/refs/heads/$BRANCH InvoiceShelf/$BRANCH || cp InvoiceShelf/.git/HEAD InvoiceShelf/$BRANCH && \
@@ -74,7 +74,7 @@ RUN \
     chown -R www-data:www-data /var/www/html/InvoiceShelf && \
     echo "* * * * * www-data cd /var/www/html/InvoiceShelf && php artisan schedule:run >> /dev/null 2>&1" >> /etc/crontab && \
     apt-get purge -y --autoremove git composer && \
-    apt-get clean -qy &&\
+    apt-get clean -qy && \
     rm -rf /var/lib/apt/lists/*
 
 # Multi-stage build: Build static assets
