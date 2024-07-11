@@ -90,6 +90,9 @@ else
   chown -R www-data:www-data /data
 fi
 
+# Link the storage
+./artisan storage:link
+
 # Update CA Certificates if we're using armv7 because armv7 is weird (#76)
 if [[ $(uname -a) == *"armv7"* ]]; then
   echo "**** Updating CA certificates ****"
