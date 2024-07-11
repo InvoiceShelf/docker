@@ -1,12 +1,9 @@
-name: Build and Push Release
+name: Nightly Alpha Build
 
 on:
+  schedule:
+    - cron: '42 18 * * *'
   workflow_dispatch:
-    inputs:
-      tagname:
-        description: 'Tag name'
-        required: true
-        default: '0.0.0'
 
 env:
   PUID: '1000'
@@ -41,7 +38,7 @@ jobs:
           platforms: linux/amd64,linux/arm/v7,linux/arm64
           push: true
           build-args: |
-            TARGET=release
+            BRANCH=develop
           tags: |
             invoiceshelf/invoiceshelf:testing-${{ github.run_id }}
 
@@ -55,7 +52,4 @@ jobs:
         name: Retag image
         run: |
           crane auth login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }} index.docker.io
-          crane tag invoiceshelf/invoiceshelf:testing-${{ github.run_id }} ${{ github.event.inputs.tagname }}
-          crane tag invoiceshelf/invoiceshelf:testing-${{ github.run_id }} latest
-          crane cp invoiceshelf/invoiceshelf:testing-${{ github.run_id }} invoiceshelf/invoiceshelf-laravel:${{ github.event.inputs.tagname }}
-          crane tag invoiceshelf/invoiceshelf-laravel:${{ github.event.inputs.tagname }} latest
+          crane tag invoiceshelf/invoiceshelf:testing-${{ github.run_id }} alpha
