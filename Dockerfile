@@ -8,6 +8,7 @@ ENV PUID='1000'
 ENV PGID='1000'
 ENV USER='invoiceshelf'
 ENV PHP_TZ=UTC
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Arguments
 # To use the latest InvoiceShelf release instead of master pass `--build-arg TARGET=release` to `docker build`

@@ -5,7 +5,7 @@ set -e
 # Read Last commit hash from .git
 # This prevents installing git, and allows display of commit
 branch=$(ls /var/www/html/InvoiceShelf/.git/refs/heads)
-read -r longhash < "/var/www/html/InvoiceShelf/.git/refs/heads/$branch"
+read -r longhash < /var/www/html/InvoiceShelf/.git/refs/heads/$branch
 shorthash=$(echo $longhash |cut -c1-7)
 if [ -f /var/www/html/InvoiceShelf/version.md ]; then
   appversion=$(</var/www/html/InvoiceShelf/version.md)
