@@ -108,7 +108,9 @@ To upgrade the image, you should do the following:
 
 ### Compose Image Tags
 
-By default all the provided docker-compose.{db}.yaml files are using the `:nightly` tag.  If you don't want this tag you can switch to different in the desired docker-compose file. For more details see: [How tags work](#how-tags-work) section.
+By default, all the provided docker-compose.{db}.yaml files are using the `:nightly` tag.  If you don't want this tag you can switch to different in the desired docker-compose file. 
+
+For more details see: [How tags work](#how-tags-work) section.
 
 **Note**: After switching to different tag, you need to rebuild by following the [Compose Upgrade](#compose-upgrade) guide above.
 

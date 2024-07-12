@@ -21,7 +21,7 @@ services:
     restart: unless-stopped
 
   invoiceshelf:
-    image: invoiceshelf/invoiceshelf:alpha
+    image: invoiceshelf/invoiceshelf:nightly
     container_name: invoiceshelf
     ports:
       - 90:80
