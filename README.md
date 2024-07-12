@@ -6,30 +6,29 @@
 
 ## Table of Contents
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->  
-- [Intro](#intro)
-- [Tags](#tags)
-- [Setup](#setup)
-	- [Quick Start](#quick-start)
-	- [What we recommend](#what-we-recommend)
-	- [Run with Docker Compose](#run-with-docker-compose)
-		- [Compose Usage](#compose-usage)
-		- [Compose Image Tags](#compose-image-tags)
-		- [Compose Upgrade](#compose-upgrade)
-	- [Run with Docker](#run-with-docker)
-		- [Database Prerequisites](#database-prerequisites)
-		- [Example with MySQL](#example-with-mysql)
+- [Introduction](#introduction)
+- [How tags work](#how-tags-work)
+- [Quick Start](#quick-start)
+- [What we recommend](#what-we-recommend)
+- [Run with Docker Compose](#run-with-docker-compose)
+    - [Compose Usage](#compose-usage)
+    - [Compose Image Tags](#compose-image-tags)
+    - [Compose Upgrade](#compose-upgrade)
+- [Run with Docker](#run-with-docker)
+    - [Database Prerequisites](#database-prerequisites)
+    - [Example with MySQL](#example-with-mysql)
 
 - [Available environment variables and defaults](#available-environment-variables-and-defaults)
 - [Advanced configuration](#advanced-configuration)
 <!-- /TOC -->  
 
-## Intro
+## Introduction
 
 This image features InvoiceShelf, nginx and PHP-FPM. The provided configuration (PHP, nginx...) follows InvoiceShelf's official recommendations and is meant to be used by end-users.
 
 **Important**:  If you are developer, please check the InvoiceShelf main repository and use image within the repository for developing.
 
-## Tags
+## How tags work
 
 The following tags are available:
 
@@ -47,10 +46,6 @@ As you can see in the above table, all docker tags have different purpose. To su
 - If you want the very latest code,  **regardless of stability**, use :alpha
 
 Best of both worlds (stable/unstable) is **invoiceshelf/invoiceshelf:nightly**. This way you have tested changes that aren't yet released but are definitely making their way into the upcoming release.
-
-## Setup
-
-The docker image can be used in different ways. If you are non-advanced user, we highly recommend to run with SQLITE.
 
 ### Quick Start
 
@@ -72,11 +67,15 @@ docker run -d \--name=invoiceshelf \
 -e STARTUP_DELAY= \
 -p 90:80 \
 invoiceshelf/invoiceshelf
-```  
+```
 
 will start InvoiceShelf listening on a port 90 and the data will be persisted in ./invoiceshelf/ directory.
 
-For more runtime options, look below in [Run with Docker Compose](#run-with-docker-compose), [Run with Docker](#run-with-docker) and [Available environment variables and defaults](#available-environment-variables-and-defaults).
+For more runtime options, look below in:
+
+* [Run with Docker Compose](#run-with-docker-compose) **(RECOMMENDED)**
+* [Run with Docker](#run-with-docker)
+* [Available environment variables and defaults](#available-environment-variables-and-defaults).
 
 ### Our recommendation
 
@@ -112,9 +111,9 @@ To upgrade the image, you should do the following:
 
 #### Compose Image Tags
 
-By default all the provided docker-compose.{db}.yaml files are using the `:nightly` tag.  If you don't want this tag you can switch to different in the desired docker-compose file. For more details refer to the [Tags](#tags) section.
+By default all the provided docker-compose.{db}.yaml files are using the `:nightly` tag.  If you don't want this tag you can switch to different in the desired docker-compose file. For more details refer to the [How tags work](#how-tags-work) section.
 
-**Note**: After switching to different tag, you need to rebuild by following the [Upgrades](#upgrades) guide above.
+**Note**: After switching to different tag, you need to rebuild by following the [Compose Upgrade](#compose-upgrade) guide above.
 
 ### Run with Docker
 
