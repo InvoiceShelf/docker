@@ -1,94 +1,132 @@
-![Supports amd64 Architecture][amd64-shield]
-![Supports arm64/aarch64 Architecture][arm64-shield]
+
+
+![Supports amd64 Architecture][amd64-shield]  
+![Supports arm64/aarch64 Architecture][arm64-shield]  
 ![Supports armv7 Architecture][armv7-shield]
 
 ## Table of Contents
-<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
-- [Image content](#image-content)
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->  
+- [Intro](#intro)
+- [Tags](#tags)
 - [Setup](#setup)
 	- [Quick Start](#quick-start)
-	- [What we recommend](#recommendation)
+	- [What we recommend](#what-we-recommend)
 	- [Run with Docker Compose](#run-with-docker-compose)
+		- [Compose Usage](#compose-usage)
+		- [Compose Image Tags](#compose-image-tags)
+		- [Compose Upgrade](#compose-upgrade)
 	- [Run with Docker](#run-with-docker)
-		- [Databse Prerequisites](#databse-prerequisites)
+		- [Database Prerequisites](#database-prerequisites)
 		- [Example with MySQL](#example-with-mysql)
 
 - [Available environment variables and defaults](#available-environment-variables-and-defaults)
 - [Advanced configuration](#advanced-configuration)
-<!-- /TOC -->
+<!-- /TOC -->  
 
-## Image Content
+## Intro
 
-This image features InvoiceShelf, nginx and PHP-FPM. The provided configuration (PHP, nginx...) follows InvoiceShelf's official recommendations.
+This image features InvoiceShelf, nginx and PHP-FPM. The provided configuration (PHP, nginx...) follows InvoiceShelf's official recommendations and is meant to be used by end-users.
 
-The following tags are available :
+**Important**:  If you are developer, please check the InvoiceShelf main repository and use image within the repository for developing.
 
-* `latest`: Latest InvoiceShelf release
-* `[NUMBER]`: Stable version tag for a InvoiceShelf release
-* `nightly` (also `dev`): Current master branch tag (InvoiceShelf operates on a stable master, so this should usually be safe)
-* `alpha` : Current develop branch tag. All future development is made here and it can be used to test most recent changes
+## Tags
+
+The following tags are available:
+
+| Docker Tag       | Purpose | Source Branch            | Build Frequency |
+|------------------|--|--------------------------|--|
+| :latest, :number | Latest stable released version | master (stable release) | On release |
+| :nightly, :dev   | Latest stable unreleased version | master (pending release) | Nightly |
+| :alpha           | Latest alpha/unstable version | develop (latest code) | Nightly |
+
+As you can see in the above table, all docker tags have different purpose. To summarize:
+
+- If you want to use **concrete version**, use :number (e.g. :2.0.0)
+- If you want the latest stable version that is **released**, use :latest
+- If you want the latest stable version that is **pending release**, use :nightly or :dev
+- If you want the very latest code,  **regardless of stability**, use :alpha
+
+Best of both worlds (stable/unstable) is **invoiceshelf/invoiceshelf:nightly**. This way you have tested changes that aren't yet released but are definitely making their way into the upcoming release.
 
 ## Setup
 
-The docker image can be used in different ways. If you are non-advanced users, we always recommend running it with SQLITE.
+The docker image can be used in different ways. If you are non-advanced user, we highly recommend to run with SQLITE.
 
 ### Quick Start
 
 To use the built-in SQLite support, no external dependencies are required. At its simplest:
 
-```bash
-docker run -d \
---name=invoiceshelf \
--v /your_local_path/conf:/conf \
--v /your_local_path/data:/data \
+```bash  
+docker run -d \--name=invoiceshelf \
+-v ./invoiceshelf/conf:/conf \
+-v ./invoiceshelf/data:/data \
 -e PHP_TZ=America/New_York \
 -e TIMEZONE=America/New_York \
--e APP_NAME=Laravel \
+-e APP_NAME=InvoiceShelf \
 -e APP_ENV=local \
--e APP_DEBUG=true \
+-e APP_DEBUG=false \
 -e APP_URL=http://localhost:90 \
--e DB_CONNECTION=sqlite \
 -e SESSION_DOMAIN=localhost \
 -e SANCTUM_STATEFUL_DOMAINS=localhost:90 \
+-e DB_CONNECTION=sqlite \
 -e STARTUP_DELAY= \
 -p 90:80 \
 invoiceshelf/invoiceshelf
-```
+```  
 
-will start InvoiceShelf listening on a port 90 and the data will be persisted in /your_local_path/ directory.
+will start InvoiceShelf listening on a port 90 and the data will be persisted in ./invoiceshelf/ directory.
 
 For more runtime options, look below in [Run with Docker Compose](#run-with-docker-compose), [Run with Docker](#run-with-docker) and [Available environment variables and defaults](#available-environment-variables-and-defaults).
 
-### What we recommend
+### Our recommendation
 
-Our recommendation is: [Run with Docker Compose](#run-with-docker-compose).
+We recommend to follow [Run with Docker Compose](#run-with-docker-compose) examples to keep it simple.
 
-If you have a massive amounts of data, you can perhaps make use of the MySQL variant.
+If you have a massive amounts of data, you can use the MySQL/Postgres variants, otherwise, just use SQLite.
 
-Otherwise, just use SQLite. By using SQLite you don't haver separate database and your database is very portable, actually your database is the database.sqlite file.
-
+By using SQLite you don't run separate database server and your database is portable with the _database.sqlite_ file.
 
 ### Run with Docker Compose
 
-To run with `docker-compose` follow the steps:
+#### Compose Usage
 
-1. Copy the `docker-compose.yml.example` to `docker-compose.yml`
-2. Change the environment variables in the [provided example](./docker-compose.yml.example) to reflect your database credentials.
+The recommended way to run InvoiceShelf is by utilizing the provided docker-compose.yaml files within this repository. You are free to modify those. The desired workflow is basically as follows:
 
-Note that in order to avoid writing credentials directly into the file, you can create a `db_secrets.env` and use the `env_file` directive (see the [docs](https://docs.docker.com/compose/environment-variables/#the-env_file-configuration-option)).
+1. Decide which database you want to use (sqlite, mysql, postgresql).
+2.  Copy the compose file. E.g. for sqlite you need to copy  `docker-compose.sqlite.yml` to `docker-compose.yml`
+3. Change the environment variables to reflect your desired setup
+4. Execute `docker compose up` to run it, and `docker compose down` to shut down
+
+#### Compose Upgrade
+
+To upgrade the image, you should do the following:
+
+1. Shut down your current environment:
+   `docker compose down`
+2. Pull the latest image version:
+   `docker compose pull`
+3. Start and rebuild:
+   `docker compose up --force-recreate --build -d`
+4. Prune/clean up the old/unused images:
+   `docker image prune`
+
+#### Compose Image Tags
+
+By default all the provided docker-compose.{db}.yaml files are using the `:nightly` tag.  If you don't want this tag you can switch to different in the desired docker-compose file. For more details refer to the [Tags](#tags) section.
+
+**Note**: After switching to different tag, you need to rebuild by following the [Upgrades](#upgrades) guide above.
 
 ### Run with Docker
 
-#### Databse Prerequisites
+#### Database Prerequisites
 
 To use this image with MySQL, MariaDB or PostgreSQL you will need a suitable database running externally.
 
-1.  Create the db, username, password.
-2.  Edit the environment variables (db credentials, language...) by :
-	*  Supplying the environment variables via `docker run` / `docker-compose` **or**
-	*  Creating a `.env` file with the appropriate info and mount it to `/conf/.env` **or**
-	*  Use the InvoiceShelf installer by passing `-e DB_CONNECTION=` on the command line and connecting to the container with your browser
-
+1. Create the db, username, password.
+2. Edit the environment variables (db credentials, language...) by :
+	* Supplying the environment variables via `docker run` / `docker-compose` **or**
+* Creating a `.env` file with the appropriate info and mount it to `/conf/.env` **or**
+* Use the InvoiceShelf installer by passing `-e DB_CONNECTION=` on the command line and connecting to the container with your browser
 
 #### Example with MySQL
 
@@ -96,11 +134,10 @@ To use this image with MySQL, MariaDB or PostgreSQL you will need a suitable dat
 
 The example below shows `--net` and `--link` for these purposes. `--net` connects to the name of the network your database is on and `--link` connects to the database container.
 
-```bash
-docker run -d \
---name=invoiceshelf \
--v /host_path/invoiceshelf/conf:/conf \
--v /host_path/invoiceshelf/data:/data \
+```bash  
+docker run -d --name=invoiceshelf \
+-v ./invoiceshelf/conf:/conf \
+-v ./invoiceshelf/data:/data \
 -e PHP_TZ=America/New_York \
 -e TIMEZONE=America/New_York \
 -e APP_NAME=Laravel \
@@ -113,26 +150,26 @@ docker run -d \
 -e DB_DATABASE=invoiceshelf \
 -e DB_USERNAME=invoiceshelf \
 -e DB_PASSWORD=somepass \
--e DB_PASSWORD_FILE= \
+-e DB_PASSWORD_FILE="" \
 -e CACHE_STORE=file \
--e SESSION_DRIVER=file \ 
+-e SESSION_DRIVER=file \
 -e SESSION_LIFETIME=120 \
 -e SESSION_ENCRYPT=false \
--e SESSION_PATH=/ \
+-e SESSION_PATH="/" \
 -e SESSION_DOMAIN=localhost \
 -e SANCTUM_STATEFUL_DOMAINS=localhost:90 \
--e STARTUP_DELAY= \
+-e STARTUP_DELAY=2 \
 -p 90:80 \
 --net network_name \
 --link db_name \
-InvoiceShelf/invoiceshelf
-```
+invoiceshelf/invoiceshelf:alpha  
+```  
 
 **Warning** : if you use a MySQL database, make sure to use the `mysql_native_password` authentication plugin, either by using the `--default-authentication-plugin` option when starting mysql, or by running a query to enable the authentication plugin for the `invoiceshelf` user, e.g. :
 
-```
-alter user 'invoiceshelf' identified with mysql_native_password by '<your password>';
-```
+```  
+alter user 'invoiceshelf' identified with mysql_native_password by '<your password>';  
+```  
 
 ### Docker secrets
 
