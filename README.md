@@ -9,7 +9,6 @@
 - [Introduction](#introduction)
 - [How tags work](#how-tags-work)
 - [Quick Start](#quick-start)
-- [What we recommend](#what-we-recommend)
 - [Run with Docker Compose](#run-with-docker-compose)
     - [Compose Usage](#compose-usage)
     - [Compose Image Tags](#compose-image-tags)
@@ -47,7 +46,7 @@ As you can see in the above table, all docker tags have different purpose. To su
 
 Best of both worlds (stable/unstable) is **invoiceshelf/invoiceshelf:nightly**. This way you have tested changes that aren't yet released but are definitely making their way into the upcoming release.
 
-### Quick Start
+## Quick Start
 
 To use the built-in SQLite support, no external dependencies are required. At its simplest:
 
@@ -77,26 +76,24 @@ For more runtime options, look below in:
 * [Run with Docker](#run-with-docker)
 * [Available environment variables and defaults](#available-environment-variables-and-defaults).
 
-### Our recommendation
+## Run with Docker Compose
 
-We recommend to follow [Run with Docker Compose](#run-with-docker-compose) examples to keep it simple.
+### Compose Usage
+
+The recommended way to run InvoiceShelf is by utilizing the provided docker-compose.yaml files within this repository.
 
 If you have a massive amounts of data, you can use the MySQL/Postgres variants, otherwise, just use SQLite.
 
 By using SQLite you don't run database server and your database is portable with the _database.sqlite_ file.
 
-### Run with Docker Compose
-
-#### Compose Usage
-
-The recommended way to run InvoiceShelf is by utilizing the provided docker-compose.yaml files within this repository. You are free to modify those. The desired workflow is basically as follows:
+The desired workflow is basically as follows:
 
 1. Decide which database you want to use (sqlite, mysql, postgresql).
 2.  Copy the compose file. E.g. for sqlite you need to copy  `docker-compose.sqlite.yml` to `docker-compose.yml`
 3. Change the environment variables to reflect your desired setup
 4. Execute `docker compose up` to run it, and `docker compose down` to shut down
 
-#### Compose Upgrade
+### Compose Upgrade
 
 To upgrade the image, you should do the following:
 
@@ -109,15 +106,15 @@ To upgrade the image, you should do the following:
 4. Prune/clean up the old/unused images:
    `docker image prune`
 
-#### Compose Image Tags
+### Compose Image Tags
 
 By default all the provided docker-compose.{db}.yaml files are using the `:nightly` tag.  If you don't want this tag you can switch to different in the desired docker-compose file. For more details see: [How tags work](#how-tags-work) section.
 
 **Note**: After switching to different tag, you need to rebuild by following the [Compose Upgrade](#compose-upgrade) guide above.
 
-### Run with Docker
+## Run with Docker
 
-#### Database Prerequisites
+### Database Prerequisites
 
 To use this image with MySQL, MariaDB or PostgreSQL you will need a suitable database running externally.
 
@@ -127,7 +124,7 @@ To use this image with MySQL, MariaDB or PostgreSQL you will need a suitable dat
 * Creating a `.env` file with the appropriate info and mount it to `/conf/.env` **or**
 * Use the InvoiceShelf installer by passing `-e DB_CONNECTION=` on the command line and connecting to the container with your browser
 
-#### Example with MySQL
+### Example with MySQL
 
 **Make sure that you link to the container running your database !!**
 
