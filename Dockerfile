@@ -41,6 +41,7 @@ RUN \
     php8.2-bcmath \
     php8.2-intl \
     php8.2-curl \
+    sqlite3 \
     curl \
     git \
     jpegoptim \
@@ -56,8 +57,8 @@ RUN \
     adduser --gecos '' --no-create-home --disabled-password --uid "$PUID" --gid "$PGID" "$USER" && \
     cd /var/www/html && \
     LATEST_VERSION=$(curl -sX GET https://api.github.com/repos/InvoiceShelf/InvoiceShelf/releases/latest | awk '/tag_name/{print $4;exit}' FS='[""]') && \
-    if [ "$TARGET" = "release" ] ; then RELEASE_TAG="$LATEST_VERSION" ; \
-    elif [ "$BRANCH" != "master" ] ; then RELEASE_TAG="$BRANCH" ; fi && \
+    if [ "$TARGET" = "release" ] ; then RELEASE_TAG="-b $LATEST_VERSION" ; \
+    elif [ "$BRANCH" != "master" ] ; then RELEASE_TAG="-b $BRANCH" ; fi && \
     git clone --depth 1 $RELEASE_TAG https://github.com/InvoiceShelf/InvoiceShelf.git && \
     mv InvoiceShelf/.git/refs/heads/$BRANCH InvoiceShelf/$BRANCH || cp InvoiceShelf/.git/HEAD InvoiceShelf/$BRANCH && \
     mv InvoiceShelf/.git/HEAD InvoiceShelf/HEAD && \
@@ -67,7 +68,6 @@ RUN \
     mv InvoiceShelf/$BRANCH InvoiceShelf/.git/refs/heads/$BRANCH && \
     echo "$TARGET" > /var/www/html/InvoiceShelf/docker_target && \
     cd /var/www/html/InvoiceShelf && \
-    echo "Last release: $LATEST_VERSION" && \
     composer install --prefer-dist && \
     find . -wholename '*/[Tt]ests/*' -delete && \
     find . -wholename '*/[Tt]est/*' -delete && \

@@ -7,9 +7,12 @@
 - [Image content](#image-content)
 - [Setup](#setup)
 	- [Quick Start](#quick-start)
-	- [Prerequisites](#prerequisites)
-	- [Run with Docker](#run-with-docker)
+	- [What we recommend](#recommendation)
 	- [Run with Docker Compose](#run-with-docker-compose)
+	- [Run with Docker](#run-with-docker)
+		- [Databse Prerequisites](#databse-prerequisites)
+		- [Example with MySQL](#example-with-mysql)
+
 - [Available environment variables and defaults](#available-environment-variables-and-defaults)
 - [Advanced configuration](#advanced-configuration)
 <!-- /TOC -->
@@ -21,32 +24,75 @@ This image features InvoiceShelf, nginx and PHP-FPM. The provided configuration 
 The following tags are available :
 
 * `latest`: Latest InvoiceShelf release
-* `v[NUMBER]`: Stable version tag for a InvoiceShelf release
+* `[NUMBER]`: Stable version tag for a InvoiceShelf release
 * `nightly` (also `dev`): Current master branch tag (InvoiceShelf operates on a stable master, so this should usually be safe)
-* `devtools`: As above, but includes development dependencies
-* `testing`: Tag for testing new branches and pull requests. Designed for internal use by InvoiceShelf.
+* `alpha` : Current develop branch tag. All future development is made here and it can be used to test most recent changes
 
 ## Setup
 
+The docker image can be used in different ways. If you are non-advanced users, we always recommend running it with SQLITE.
+
 ### Quick Start
 
-To use the built-in SQLite support, no external dependencies are required. At its simplest, `docker run -p 80 InvoiceShelf/invoiceshelf:dev` will start InvoiceShelf listening on a random port on the local host.
+To use the built-in SQLite support, no external dependencies are required. At its simplest:
 
-For more runtime options, look below in [Run with Docker](#run-with-docker) and [Available environment variables and defaults](#available-environment-variables-and-defaults).
+```bash
+docker run -d \
+--name=invoiceshelf \
+-v /your_local_path/conf:/conf \
+-v /your_local_path/data:/data \
+-e PHP_TZ=America/New_York \
+-e TIMEZONE=America/New_York \
+-e APP_NAME=Laravel \
+-e APP_ENV=local \
+-e APP_DEBUG=true \
+-e APP_URL=http://localhost:90 \
+-e DB_CONNECTION=sqlite \
+-e SESSION_DOMAIN=localhost \
+-e SANCTUM_STATEFUL_DOMAINS=localhost:90 \
+-e STARTUP_DELAY= \
+-p 90:80 \
+invoiceshelf/invoiceshelf
+```
 
-### Prerequisites
+will start InvoiceShelf listening on a port 90 and the data will be persisted in /your_local_path/ directory.
 
-To use this image with MySQL, MariaDB or PostgreSQL you will need a suitable database running externally. This may be through a Docker image, possibly in your `docker-compose.yml`.
+For more runtime options, look below in [Run with Docker Compose](#run-with-docker-compose), [Run with Docker](#run-with-docker) and [Available environment variables and defaults](#available-environment-variables-and-defaults).
 
-1.  Create the db, username, password.
-2.  Edit the environment variables (db credentials, language...) by :
-    *  Supplying the environment variables via `docker run` / `docker-compose` **or**
-    *  Creating a `.env` file with the appropriate info and mount it to `/conf/.env` **or**
-    *  Use the InvoiceShelf installer by passing `-e DB_CONNECTION=` on the command line and connecting to the container with your browser
+### What we recommend
+
+Our recommendation is: [Run with Docker Compose](#run-with-docker-compose).
+
+If you have a massive amounts of data, you can perhaps make use of the MySQL variant.
+
+Otherwise, just use SQLite. By using SQLite you don't haver separate database and your database is very portable, actually your database is the database.sqlite file.
+
+
+### Run with Docker Compose
+
+To run with `docker-compose` follow the steps:
+
+1. Copy the `docker-compose.yml.example` to `docker-compose.yml`
+2. Change the environment variables in the [provided example](./docker-compose.yml.example) to reflect your database credentials.
+
+Note that in order to avoid writing credentials directly into the file, you can create a `db_secrets.env` and use the `env_file` directive (see the [docs](https://docs.docker.com/compose/environment-variables/#the-env_file-configuration-option)).
 
 ### Run with Docker
 
-**Make sure that you link to the container running your database !!**  
+#### Databse Prerequisites
+
+To use this image with MySQL, MariaDB or PostgreSQL you will need a suitable database running externally.
+
+1.  Create the db, username, password.
+2.  Edit the environment variables (db credentials, language...) by :
+	*  Supplying the environment variables via `docker run` / `docker-compose` **or**
+	*  Creating a `.env` file with the appropriate info and mount it to `/conf/.env` **or**
+	*  Use the InvoiceShelf installer by passing `-e DB_CONNECTION=` on the command line and connecting to the container with your browser
+
+
+#### Example with MySQL
+
+**Make sure that you link to the container running your database !!**
 
 The example below shows `--net` and `--link` for these purposes. `--net` connects to the name of the network your database is on and `--link` connects to the database container.
 
@@ -54,18 +100,28 @@ The example below shows `--net` and `--link` for these purposes. `--net` connect
 docker run -d \
 --name=invoiceshelf \
 -v /host_path/invoiceshelf/conf:/conf \
--v /host_path/invoiceshelf/uploads:/uploads \
--v /host_path/invoiceshelf/sym:/sym \
--e PUID=1000 \
--e PGID=1000 \
+-v /host_path/invoiceshelf/data:/data \
 -e PHP_TZ=America/New_York \
 -e TIMEZONE=America/New_York \
+-e APP_NAME=Laravel \
+-e APP_ENV=local \
+-e APP_DEBUG=true \
+-e APP_URL=http://localhost:90 \
 -e DB_CONNECTION=mysql \
--e DB_HOST=mariadb \
+-e DB_HOST=invoiceshelf_db \
 -e DB_PORT=3306 \
 -e DB_DATABASE=invoiceshelf \
--e DB_USERNAME=user \
--e DB_PASSWORD=password \
+-e DB_USERNAME=invoiceshelf \
+-e DB_PASSWORD=somepass \
+-e DB_PASSWORD_FILE= \
+-e CACHE_STORE=file \
+-e SESSION_DRIVER=file \ 
+-e SESSION_LIFETIME=120 \
+-e SESSION_ENCRYPT=false \
+-e SESSION_PATH=/ \
+-e SESSION_DOMAIN=localhost \
+-e SANCTUM_STATEFUL_DOMAINS=localhost:90 \
+-e STARTUP_DELAY= \
 -p 90:80 \
 --net network_name \
 --link db_name \
@@ -78,15 +134,6 @@ InvoiceShelf/invoiceshelf
 alter user 'invoiceshelf' identified with mysql_native_password by '<your password>';
 ```
 
-### Run with Docker Compose
-
-To run with `docker-compose` follow the steps:
-
-1. Copy the `docker-compose.yml.example` to `docker-compose.yml`
-2. Change the environment variables in the [provided example](./docker-compose.yml.example) to reflect your database credentials.
-
-Note that in order to avoid writing credentials directly into the file, you can create a `db_secrets.env` and use the `env_file` directive (see the [docs](https://docs.docker.com/compose/environment-variables/#the-env_file-configuration-option)).
-
 ### Docker secrets
 
 As an alternative to passing sensitive information via environment variables, _FILE may be appended to some of the environment variables, causing the initialization script to load the values for those variables from files present in the container. In particular, this can be used to load passwords from Docker secrets stored in /run/secrets/<secret_name> files.
@@ -96,7 +143,7 @@ If both the original variable and the _FILE (e.g. both DB_PASSWORD and DB_PASSWO
 The following _FILE variables are supported:
 
 * DB_PASSWORD_FILE
-* REDIS_PASSWORD_FILE 
+* REDIS_PASSWORD_FILE
 * MAIL_PASSWORD_FILE
 * ADMIN_PASSWORD_FILE
 
@@ -116,9 +163,7 @@ Additionally, if `SKIP_PERMISSIONS_CHECKS` is set to "yes", the entrypoint scrip
 
 ## Advanced configuration
 
-Note that nginx will accept by default images up to 100MB (`client_max_body_size 100M`) and that PHP parameters are overridden according to the [recommendations of the InvoiceShelf FAQ](https://InvoiceShelf.github.io/docs/faq.html#i-cant-upload-large-photos).
-
-You may still want to further customize PHP configuration. The first method is to mount a custom `php.ini` to `/etc/php/8.2/fpm/php.ini` when starting the container. However, this method is kind of brutal as it will override all parameters. It will also need to be remapped whenever an image is released with a new version of PHP.
+If you want to  customize PHP the configuration, the first method is to mount a custom `php.ini` to `/etc/php/8.2/fpm/php.ini` when starting the container. However, this method is kind of brutal as it will override all parameters. It will also need to be remapped whenever an image is released with a new version of PHP.
 
 Instead, we recommend to use the `PHP_VALUE` directive of PHP-FPM to override specific parameters. To do so, you will need to mount a custom `nginx.conf` in your container :
 

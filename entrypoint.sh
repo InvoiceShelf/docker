@@ -42,27 +42,24 @@ echo "**** Expose storage ****"
 
 cd /var/www/html/InvoiceShelf
 
-if [ "$DB_CONNECTION" = "sqlite" ] || [ -z "$DB_CONNECTION" ]
-	then if [ -n "$DB_DATABASE" ]
-		then if [ ! -e "$DB_DATABASE" ]
-			then echo "**** Specified sqlite database doesn't exist. Creating it ****"
-			echo "**** Please make sure your database is on a persistent volume ****"
-			touch "$DB_DATABASE"
-			chown www-data:www-data "$DB_DATABASE"
-		fi
-		chown www-data:www-data "$DB_DATABASE"
-	else DB_DATABASE="/var/www/html/InvoiceShelf/database/database.sqlite"
-		export DB_DATABASE
-		if [ ! -L database/database.sqlite ]
-			then [ ! -e /conf/database.sqlite ] && \
-			echo "**** Copy the default database to /conf ****" && \
-			cp database/database.sqlite /conf/database.sqlite
-			echo "**** Create the symbolic link for the database ****"
-			rm database/database.sqlite
-			ln -s /conf/database.sqlite database/database.sqlite
-			chown -h www-data:www-data /conf /conf/database.sqlite database/database.sqlite
-		fi
-	fi
+if [ "$DB_CONNECTION" = "sqlite" ] || [ -z "$DB_CONNECTION" ] ; then
+  echo "**** Configure SQLite3 database ****"
+  if [ ! -n "$DB_DATABASE" ]; then
+    echo "**** DB_DATABSE not defined. Fall back to default /database/database.sqlite location ****"
+    DB_DATABASE='/var/www/html/InvoiceShelf/database/database.sqlite'
+  fi
+  DB_FILENAME=$(basename ${DB_DATABASE});
+  if [ ! -e "/conf/$DB_FILENAME" ]; then
+    echo "**** Specified sqlite database doesn't exist. Creating it ****"
+    echo "**** Please make sure your database is on a persistent volume ****"
+    sqlite3 $DB_DATABASE "VACUUM;"
+    mv $DB_DATABASE /conf/$DB_FILENAME
+  fi
+  if [ ! -L $DB_DATABASE ]; then
+    echo "**** Create the symbolic link for the database ****"
+    ln -s /conf/$DB_FILENAME $DB_DATABASE
+  fi
+  chown www-data:www-data $DB_DATABASE /conf/$DB_FILENAME
 fi
 
 echo "**** Copy the .env to /conf ****" && \
@@ -73,29 +70,17 @@ echo "**** Copy the .env to /conf ****" && \
 echo "**** Inject .env values ****" && \
 	/inject.sh
 
-create_admin_user() {
-  if [ "$ADMIN_USER" != '' ]; then
-    if [ "$ADMIN_PASSWORD" != '' ]; then
-      value=$ADMIN_PASSWORD
-    elif [ -e "$ADMIN_PASSWORD_FILE" ] ; then
-      value=$(<$ADMIN_PASSWORD_FILE)
-    fi
-    if [ "$value" != '' ]; then
-      echo "**** Creating admin account ****" && \
-      php artisan lychee:create_user "$ADMIN_USER" "$value"
-    fi
-  fi
-}
+echo "**** Setting up artisan permissions ****"
+chmod +x artisan
 
-[ ! -e /tmp/first_run ] && \
-  echo "**** Setting up artisan permissions ****"
-  chmod +x artisan
-	echo "**** Generate the key (to make sure that cookies cannot be decrypted etc) ****" && \
-	./artisan key:generate -n && \
-	echo "**** Migrate the database ****" && \
-	./artisan migrate --force && \
-	create_admin_user && \
-	touch /tmp/first_run
+if [ ! -e /tmp/first_run ]; then
+  	echo "**** Generate the key (to make sure that cookies cannot be decrypted etc) ****" && \
+  	./artisan key:generate -n && \
+  	touch /tmp/first_run
+else
+  	echo "**** Migrate the database ****" && \
+  	./artisan migrate --force
+fi
 
 echo "**** Create user and use PUID/PGID ****"
 PUID=${PUID:-1000}
@@ -114,10 +99,11 @@ if [ -n "$SKIP_PERMISSIONS_CHECKS" ] && [ "${SKIP_PERMISSIONS_CHECKS,,}" = "yes"
 else
 	echo "**** Set Permissions ****"
 	# Set ownership of directories, then files and only when required.
-	find /data -type d \( ! -user "$USER" -o ! -group "$USER" \) -exec chown -R "$USER":"$USER" \{\} \;
-	find /conf/.env /data \( ! -user "$USER" -o ! -group "$USER" \) -exec chown "$USER":"$USER" \{\} \;
-	find /data -type d \( ! -perm -ug+w -o ! -perm -ugo+rX -o ! -perm -g+s \) -exec chmod -R ug+w,ugo+rX,g+s \{\} \;
-	find /conf/.env /data \( ! -perm -ug+w -o ! -perm -ugo+rX \) -exec chmod ug+w,ugo+rX \{\} \;
+	find /var/www/html/InvoiceShelf/bootstrap -type d \( ! -perm -ug+w -o ! -perm -ugo+rX -o ! -perm -g+s \) -exec chmod -R ug+w,ugo+rX,g+s \{\} \;
+	find /conf /data -type d \( ! -user "$USER" -o ! -group "$USER" \) -exec chown -R "$USER":"$USER" \{\} \;
+	find /conf /data \( ! -user "$USER" -o ! -group "$USER" \) -exec chown "$USER":"$USER" \{\} \;
+	find /conf /data -type d \( ! -perm -ug+w -o ! -perm -ugo+rX -o ! -perm -g+s \) -exec chmod -R ug+w,ugo+rX,g+s \{\} \;
+	find /conf /data \( ! -perm -ug+w -o ! -perm -ugo+rX \) -exec chmod ug+w,ugo+rX \{\} \;
 fi
 
 # Update CA Certificates if we're using armv7 because armv7 is weird (#76)

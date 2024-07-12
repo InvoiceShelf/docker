@@ -1,0 +1,67 @@
+#-------------------------------------------
+# InvoiceShelf PostgreSQL docker-compose variant
+# Repo : https://github.com/InvoiceShelf/docker
+#-------------------------------------------
+
+services:
+  invoiceshelf_db:
+    container_name: invoiceshelf_db
+    image: postgres:15
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=somepass
+      - POSTGRES_USER=invoiceshelf
+      - POSTGRES_DB=invoiceshelf
+    networks:
+      - invoiceshelf
+    restart: unless-stopped
+  invoiceshelf:
+    image: invoiceshelf/invoiceshelf:alpha
+    container_name: invoiceshelf
+    ports:
+      - 90:80
+    volumes:
+      - ./invoiceshelf_pgsql/data:/data
+      - ./invoiceshelf_pgsql/conf:/conf
+    networks:
+      - invoiceshelf
+    environment:
+      - PHP_TZ=UTC
+      - TIMEZONE=UTC
+      - APP_NAME=Laravel
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - APP_URL=http://localhost:90
+      - DB_CONNECTION=postgres
+      - DB_HOST=invoiceshelf_db
+      - DB_PORT=5432
+      - DB_DATABASE=invoiceshelf
+      - DB_USERNAME=invoiceshelf
+      - DB_PASSWORD=somepass
+      - CACHE_STORE=file
+      - SESSION_DRIVER=file
+      - SESSION_LIFETIME=120
+      - SESSION_ENCRYPT=false
+      - SESSION_PATH=/
+      - SESSION_DOMAIN=localhost
+      - SANCTUM_STATEFUL_DOMAINS=localhost:90
+      - STARTUP_DELAY=
+      #- MAIL_DRIVER=smtp
+      #- MAIL_HOST=smtp.mailtrap.io
+      #- MAIL_PORT=2525
+      #- MAIL_USERNAME=null
+      #- MAIL_PASSWORD=null
+      #- MAIL_PASSWORD_FILE=<filename>
+      #- MAIL_ENCRYPTION=null
+    restart: unless-stopped
+    depends_on:
+      - invoiceshelf_db
+
+networks:
+  invoiceshelf:
+
+volumes:
+  postgres:
