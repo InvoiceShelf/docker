@@ -83,7 +83,7 @@ We recommend to follow [Run with Docker Compose](#run-with-docker-compose) examp
 
 If you have a massive amounts of data, you can use the MySQL/Postgres variants, otherwise, just use SQLite.
 
-By using SQLite you don't run separate database server and your database is portable with the _database.sqlite_ file.
+By using SQLite you don't run database server and your database is portable with the _database.sqlite_ file.
 
 ### Run with Docker Compose
 
@@ -111,7 +111,7 @@ To upgrade the image, you should do the following:
 
 #### Compose Image Tags
 
-By default all the provided docker-compose.{db}.yaml files are using the `:nightly` tag.  If you don't want this tag you can switch to different in the desired docker-compose file. For more details refer to the [How tags work](#how-tags-work) section.
+By default all the provided docker-compose.{db}.yaml files are using the `:nightly` tag.  If you don't want this tag you can switch to different in the desired docker-compose file. For more details see: [How tags work](#how-tags-work) section.
 
 **Note**: After switching to different tag, you need to rebuild by following the [Compose Upgrade](#compose-upgrade) guide above.
 
