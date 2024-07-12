@@ -21,13 +21,13 @@ services:
     restart: unless-stopped
 
   invoiceshelf:
-    image: invoiceshelf/invoiceshelf:nightly
+    image: invoiceshelf/invoiceshelf:1.2.2
     container_name: invoiceshelf
     ports:
       - 90:80
     volumes:
-      - ./invoiceshelf/data:/data
-      - ./invoiceshelf/conf:/conf
+      - ./invoiceshelf_mysql/data:/data
+      - ./invoiceshelf_mysql/conf:/conf
     networks:
       - invoiceshelf
     environment:
