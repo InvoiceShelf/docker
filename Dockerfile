@@ -15,6 +15,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 ARG TARGET=nightly
 # To install composer development dependencies, pass `--build-arg COMPOSER_NO_DEV=0` to `docker build`
 ARG COMPOSER_NO_DEV=1
+# To use another branch instead of master pass `--build-arg BRANCH=some-branch` to `docker build`
+# This is NOT compatible with the release target above
+ARG BRANCH=master
 
 # Install base dependencies, add user and group, clone the repo and install php libraries
 RUN \
