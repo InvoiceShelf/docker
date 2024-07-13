@@ -1,8 +1,6 @@
 
 
-![Supports amd64 Architecture][amd64-shield]  
-![Supports arm64/aarch64 Architecture][arm64-shield]  
-![Supports armv7 Architecture][armv7-shield]
+![Supports amd64 Architecture][amd64-shield]  ![Supports arm64/aarch64 Architecture][arm64-shield]  ![Supports armv7 Architecture][armv7-shield]
 
 ## Table of Contents
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->  
