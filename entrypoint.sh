@@ -7,16 +7,11 @@ set -e
 branch=$(ls /var/www/html/InvoiceShelf/.git/refs/heads)
 read -r longhash < /var/www/html/InvoiceShelf/.git/refs/heads/$branch
 shorthash=$(echo $longhash |cut -c1-7)
-if [ -f /var/www/html/InvoiceShelf/version.md ]; then
-  appversion=$(</var/www/html/InvoiceShelf/version.md)
-else
-  appversion='unknown'
-fi
 target=$(</var/www/html/InvoiceShelf/docker_target)
 
 echo "
 -------------------------------------
-InvoiceShelf Version: $appversion ($target)
+InvoiceShelf Branch:  $branch ($target)
 InvoiceShelf Commit:  $shorthash
 https://github.com/InvoiceShelf/InvoiceShelf/commit/$longhash
 -------------------------------------"
