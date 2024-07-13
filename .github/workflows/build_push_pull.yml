@@ -16,16 +16,16 @@ jobs:
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4.1.7
       -
         name: Set up QEMU
-        uses: docker/setup-qemu-action@v3.0.0
+        uses: docker/setup-qemu-action@v3.1.0
       -
         name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.0.0
+        uses: docker/setup-buildx-action@v3.4.0
       -
         name: Test multiarch building
-        uses: docker/build-push-action@v5.1.0
+        uses: docker/build-push-action@v6.3.0
         with:
           context: .
           file: ./Dockerfile
@@ -36,7 +36,7 @@ jobs:
             invoiceshelf/invoiceshelf:testing-${{ github.run_id }}
       -
         name: Save amd64 image to pass to testing
-        uses: docker/build-push-action@v5.1.0
+        uses: docker/build-push-action@v6.3.0
         with:
           context: .
           file: ./Dockerfile
@@ -56,7 +56,7 @@ jobs:
           sha256sum artifact/invoiceshelf.tar || echo 0
       -
         name: Store as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4.3.4
         with:
           name: artifact
           path: ./artifact

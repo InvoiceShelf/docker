@@ -19,22 +19,22 @@ jobs:
     steps:
       -
         name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4.1.7
       -
         name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3.1.0
       -
         name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3.4.0
       -
         name: Login to DockerHub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3.2.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
         name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v6.3.0
         with:
           context: .
           file: ./Dockerfile
@@ -53,4 +53,3 @@ jobs:
         run: |
           crane auth login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }} index.docker.io
           crane tag invoiceshelf/invoiceshelf:testing-${{ github.run_id }} ${{ github.event.inputs.tagname }}
-          crane cp invoiceshelf/invoiceshelf:testing-${{ github.run_id }} invoiceshelf/invoiceshelf-laravel:${{ github.event.inputs.tagname }}
