@@ -77,9 +77,9 @@ if [ ! -e /tmp/first_run ]; then
   	echo "**** Generate the key (to make sure that cookies cannot be decrypted etc) ****" && \
   	./artisan key:generate -n && \
   	touch /tmp/first_run
-else
-  	echo "**** Migrate the database ****" && \
-  	./artisan migrate --force
+elif [ -e /data/app/database_created ]; then
+    echo "**** Migrate the database ****" && \
+    ./artisan migrate --force
 fi
 
 echo "**** Create user and use PUID/PGID ****"
