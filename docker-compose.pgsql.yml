@@ -35,7 +35,7 @@ services:
       - APP_ENV=local
       - APP_DEBUG=true
       - APP_URL=http://localhost:90
-      - DB_CONNECTION=postgres
+      - DB_CONNECTION=pgsql
       - DB_HOST=invoiceshelf_db
       - DB_PORT=5432
       - DB_DATABASE=invoiceshelf
