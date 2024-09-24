@@ -2,6 +2,8 @@
 
 ![Supports amd64 Architecture][amd64-shield]  ![Supports arm64/aarch64 Architecture][arm64-shield]  ![Supports armv7 Architecture][armv7-shield]
 
+[![Build and Push Release](https://github.com/InvoiceShelf/docker/actions/workflows/build_push_release.yml/badge.svg)](https://github.com/InvoiceShelf/docker/actions/workflows/build_push_release.yml)
+
 ## Table of Contents
 <!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->  
 - [Introduction](#introduction)
