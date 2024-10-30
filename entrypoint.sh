@@ -77,6 +77,9 @@ elif [ -e /data/app/database_created ]; then
     ./artisan migrate --force
 fi
 
+echo "**** Setting the version ****" && \
+./artisan tinker --execute="\Schema::hasTable('settings') && \App\Space\InstallUtils::setCurrentVersion()" -n -q
+
 echo "**** Create user and use PUID/PGID ****"
 PUID=${PUID:-1000}
 PGID=${PGID:-1000}
