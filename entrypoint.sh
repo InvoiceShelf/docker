@@ -8,12 +8,15 @@ branch=$(ls /var/www/html/InvoiceShelf/.git/refs/heads)
 read -r longhash < /var/www/html/InvoiceShelf/.git/refs/heads/$branch
 shorthash=$(echo $longhash |cut -c1-7)
 target=$(</var/www/html/InvoiceShelf/docker_target)
+version=$(head -n 1 /var/www/html/InvoiceShelf/version.md)
 
 echo "
 -------------------------------------
-InvoiceShelf Branch:  $branch ($target)
-InvoiceShelf Commit:  $shorthash
-https://github.com/InvoiceShelf/InvoiceShelf/commit/$longhash
+InvoiceShelf Branch:   $branch ($target)
+InvoiceShelf Commit:   $shorthash
+InvoiceShelf Version:  $version
+-------------------------------------
+Link to commit: https://github.com/InvoiceShelf/InvoiceShelf/commit/$longhash
 -------------------------------------"
 
 if [ -n "$STARTUP_DELAY" ]
