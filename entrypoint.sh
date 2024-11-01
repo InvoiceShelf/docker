@@ -71,13 +71,19 @@ echo "**** Inject .env values ****" && \
 echo "**** Setting up artisan permissions ****"
 chmod +x artisan
 
-if [ ! -e /tmp/first_run ]; then
-  	echo "**** Generate the key (to make sure that cookies cannot be decrypted etc) ****" && \
-  	./artisan key:generate -n && \
-  	touch /tmp/first_run
-elif [ -e /data/app/database_created ]; then
-    echo "**** Migrate the database ****" && \
-    ./artisan migrate --force
+if ! grep -q "APP_KEY" /conf/.env
+then
+    echo "**** Creating empty APP_KEY variable ****"
+    echo "$(printf "APP_KEY=\n"; cat /conf/.env)" > /conf/.env
+fi
+if ! grep -q '^APP_KEY=[^[:space:]]' /conf/.env; then
+  echo "**** Generating new APP_KEY variable **** " && \
+  ./artisan key:generate -n
+fi
+
+if [ -e /data/app/database_created ]; then
+    echo "**** Migrating the database ****" && \
+    ./artisan migrate --force -n
 fi
 
 echo "**** Setting the version ****" && \
