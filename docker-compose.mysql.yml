@@ -8,10 +8,10 @@ services:
     container_name: invoiceshelf_db
     image: mariadb:10
     environment:
-      - MYSQL_ROOT_PASSWORD=somerootpass
+      - MYSQL_ROOT_PASSWORD="somerootpass"
       - MYSQL_DATABASE=invoiceshelf
       - MYSQL_USER=invoiceshelf
-      - MYSQL_PASSWORD=somepass
+      - MYSQL_PASSWORD="somepass"
     expose:
       - 3306
     volumes:
