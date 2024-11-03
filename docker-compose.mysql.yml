@@ -8,10 +8,10 @@ services:
     container_name: invoiceshelf_db
     image: mariadb:10
     environment:
-      - MYSQL_ROOT_PASSWORD="somerootpass"
       - MYSQL_DATABASE=invoiceshelf
       - MYSQL_USER=invoiceshelf
       - MYSQL_PASSWORD="somepass"
+      - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=true
     expose:
       - 3306
     volumes:
@@ -19,6 +19,10 @@ services:
     networks:
       - invoiceshelf
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mariadb-admin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
 
   invoiceshelf:
     image: invoiceshelf/invoiceshelf:nightly
