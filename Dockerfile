@@ -41,6 +41,7 @@ RUN \
     php8.2-bcmath \
     php8.2-intl \
     php8.2-curl \
+    sendmail \
     sqlite3 \
     curl \
     git \
