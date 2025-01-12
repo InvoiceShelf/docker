@@ -42,6 +42,7 @@ RUN \
     php8.2-intl \
     php8.2-curl \
     sqlite3 \
+    default-mysql-client \
     curl \
     git \
     jpegoptim \
