@@ -44,6 +44,7 @@ RUN \
     sendmail \
     sqlite3 \
     default-mysql-client \
+    postgresql-client \
     curl \
     git \
     jpegoptim \
