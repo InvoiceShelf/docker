@@ -25,7 +25,7 @@ services:
       retries: 10
 
   invoiceshelf:
-    image: invoiceshelf/invoiceshelf:nightly
+    image: invoiceshelf/invoiceshelf:latest
     container_name: invoiceshelf
     ports:
       - 90:80
