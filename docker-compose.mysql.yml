@@ -10,7 +10,7 @@ services:
     environment:
       - MYSQL_DATABASE=invoiceshelf
       - MYSQL_USER=invoiceshelf
-      - MYSQL_PASSWORD="somepass"
+      - MYSQL_PASSWORD=somepass
       - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=true
     expose:
       - 3306
