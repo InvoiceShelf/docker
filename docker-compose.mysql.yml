@@ -1,3 +1,4 @@
+---
 #-------------------------------------------
 # InvoiceShelf MySQL docker-compose variant
 # Repo : https://github.com/InvoiceShelf/docker
@@ -20,13 +21,15 @@ services:
       - invoiceshelf
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "mariadb-admin" ,"ping", "-h", "localhost"]
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
 
   invoiceshelf:
     image: invoiceshelf/invoiceshelf:nightly
-    container_name: invoiceshelf
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - 90:80
     volumes:

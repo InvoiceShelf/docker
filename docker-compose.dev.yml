@@ -1,3 +1,4 @@
+---
 #-------------------------------------------
 # InvoiceShelf docker-compose variant for
 # docker image development/testing purposes.
@@ -16,7 +17,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-
     container_name: invoiceshelf
     ports:
       - 90:80

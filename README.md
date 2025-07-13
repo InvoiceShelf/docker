@@ -1,48 +1,49 @@
-
-
-![Supports amd64 Architecture][amd64-shield]  ![Supports arm64/aarch64 Architecture][arm64-shield]  ![Supports armv7 Architecture][armv7-shield]
+![Supports amd64 Architecture][amd64-shield] ![Supports arm64/aarch64 Architecture][arm64-shield] ![Supports armv7 Architecture][armv7-shield]
 
 [![Build and Push Release](https://github.com/InvoiceShelf/docker/actions/workflows/build_push_release.yml/badge.svg)](https://github.com/InvoiceShelf/docker/actions/workflows/build_push_release.yml)
 
 ## Table of Contents
-<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->  
+
+<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
+
 - [Introduction](#introduction)
 - [How tags work](#how-tags-work)
 - [Quick Start](#quick-start)
 - [Run with Docker Compose](#run-with-docker-compose)
-    - [Compose Usage](#compose-usage)
-    - [Compose Image Tags](#compose-image-tags)
-    - [Compose Upgrade](#compose-upgrade)
+  - [Compose Usage](#compose-usage)
+  - [Compose Image Tags](#compose-image-tags)
+  - [Compose Upgrade](#compose-upgrade)
 - [Run with Docker](#run-with-docker)
-    - [Database Prerequisites](#database-prerequisites)
-    - [Example with MySQL](#example-with-mysql)
+
+  - [Database Prerequisites](#database-prerequisites)
+  - [Example with MySQL](#example-with-mysql)
 
 - [Available environment variables and defaults](#available-environment-variables-and-defaults)
 - [Advanced configuration](#advanced-configuration)
-<!-- /TOC -->  
+<!-- /TOC -->
 
 ## Introduction
 
 This image features InvoiceShelf, nginx and PHP-FPM. The provided configuration (PHP, nginx...) follows InvoiceShelf's official recommendations and is meant to be used by end-users.
 
-**Important**:  If you are developer, please check the InvoiceShelf main repository and use image within the repository for developing.
+**Important**: If you are developer, please check the InvoiceShelf main repository and use image within the repository for developing.
 
 ## How tags work
 
 The following tags are available:
 
-| Docker Tag       | Purpose | Source Branch            | Build Frequency |
-|------------------|--|--------------------------|--|
-| :latest, :number | Latest stable released version | master (stable release) | On release |
-| :nightly, :dev   | Latest stable unreleased version | master (pending release) | Nightly |
-| :alpha           | Latest alpha/unstable version | develop (latest code) | Nightly |
+| Docker Tag       | Purpose                          | Source Branch            | Build Frequency |
+| ---------------- | -------------------------------- | ------------------------ | --------------- |
+| :latest, :number | Latest stable released version   | master (stable release)  | On release      |
+| :nightly, :dev   | Latest stable unreleased version | master (pending release) | Nightly         |
+| :alpha           | Latest alpha/unstable version    | develop (latest code)    | Nightly         |
 
 As you can see in the above table, all docker tags have different purpose. To summarize:
 
 - If you want to use **concrete version**, use :number (e.g. :2.0.0)
 - If you want the latest stable version that is **released**, use :latest
 - If you want the latest stable version that is **pending release**, use :nightly or :dev
-- If you want the very latest code,  **regardless of stability**, use :alpha
+- If you want the very latest code, **regardless of stability**, use :alpha
 
 Best of both worlds (stable/unstable) is **invoiceshelf/invoiceshelf:nightly**. This way you have tested changes that aren't yet released but are definitely making their way into the upcoming release.
 
@@ -50,7 +51,7 @@ Best of both worlds (stable/unstable) is **invoiceshelf/invoiceshelf:nightly**. 
 
 To use the built-in SQLite support, no external dependencies are required. At its simplest:
 
-```bash  
+```bash
 docker run -d \--name=invoiceshelf \
 -v ./invoiceshelf/conf:/conf \
 -v ./invoiceshelf/data:/data \
@@ -72,9 +73,9 @@ will start InvoiceShelf listening on a port 90 and the data will be persisted in
 
 For more runtime options, look below in:
 
-* [Run with Docker Compose](#run-with-docker-compose) **(RECOMMENDED)**
-* [Run with Docker](#run-with-docker)
-* [Available environment variables and defaults](#available-environment-variables-and-defaults).
+- [Run with Docker Compose](#run-with-docker-compose) **(RECOMMENDED)**
+- [Run with Docker](#run-with-docker)
+- [Available environment variables and defaults](#available-environment-variables-and-defaults).
 
 ## Run with Docker Compose
 
@@ -89,7 +90,7 @@ By using SQLite you don't run database server and your database is portable with
 The desired workflow is basically as follows:
 
 1. Decide which database you want to use (sqlite, mysql, postgresql).
-2.  Copy the compose file. E.g. for sqlite you need to copy  `docker-compose.sqlite.yml` to `docker-compose.yml`
+2. Copy the compose file. E.g. for sqlite you need to copy `docker-compose.sqlite.yml` to `docker-compose.yml`
 3. Change the environment variables to reflect your desired setup
 4. Execute `docker compose up` to run it, and `docker compose down` to shut down
 
@@ -108,7 +109,7 @@ To upgrade the image, you should do the following:
 
 ### Compose Image Tags
 
-By default, all the provided docker-compose.{db}.yaml files are using the `:nightly` tag.  If you don't want this tag you can switch to different in the desired docker-compose file. 
+By default, all the provided docker-compose.{db}.yaml files are using the `:nightly` tag. If you don't want this tag you can switch to different in the desired docker-compose file.
 
 For more details see: [How tags work](#how-tags-work) section.
 
@@ -122,9 +123,10 @@ To use this image with MySQL, MariaDB or PostgreSQL you will need a suitable dat
 
 1. Create the db, username, password.
 2. Edit the environment variables (db credentials, language...) by :
-	* Supplying the environment variables via `docker run` / `docker-compose` **or**
-* Creating a `.env` file with the appropriate info and mount it to `/conf/.env` **or**
-* Use the InvoiceShelf installer by passing `-e DB_CONNECTION=` on the command line and connecting to the container with your browser
+   - Supplying the environment variables via `docker run` / `docker-compose` **or**
+
+- Creating a `.env` file with the appropriate info and mount it to `/conf/.env` **or**
+- Use the InvoiceShelf installer by passing `-e DB_CONNECTION=` on the command line and connecting to the container with your browser
 
 ### Example with MySQL
 
@@ -132,7 +134,7 @@ To use this image with MySQL, MariaDB or PostgreSQL you will need a suitable dat
 
 The example below shows `--net` and `--link` for these purposes. `--net` connects to the name of the network your database is on and `--link` connects to the database container.
 
-```bash  
+```bash
 docker run -d --name=invoiceshelf \
 -v ./invoiceshelf/conf:/conf \
 -v ./invoiceshelf/data:/data \
@@ -160,27 +162,27 @@ docker run -d --name=invoiceshelf \
 -p 90:80 \
 --net network_name \
 --link db_name \
-invoiceshelf/invoiceshelf:alpha  
-```  
+invoiceshelf/invoiceshelf:alpha
+```
 
 **Warning** : if you use a MySQL database, make sure to use the `mysql_native_password` authentication plugin, either by using the `--default-authentication-plugin` option when starting mysql, or by running a query to enable the authentication plugin for the `invoiceshelf` user, e.g. :
 
-```  
-alter user 'invoiceshelf' identified with mysql_native_password by '<your password>';  
-```  
+```
+alter user 'invoiceshelf' identified with mysql_native_password by '<your password>';
+```
 
 ### Docker secrets
 
-As an alternative to passing sensitive information via environment variables, _FILE may be appended to some of the environment variables, causing the initialization script to load the values for those variables from files present in the container. In particular, this can be used to load passwords from Docker secrets stored in /run/secrets/<secret_name> files.
+As an alternative to passing sensitive information via environment variables, \_FILE may be appended to some of the environment variables, causing the initialization script to load the values for those variables from files present in the container. In particular, this can be used to load passwords from Docker secrets stored in /run/secrets/<secret_name> files.
 
-If both the original variable and the _FILE (e.g. both DB_PASSWORD and DB_PASSWORD_FILE) are set, the original variable will be used.
+If both the original variable and the \_FILE (e.g. both DB_PASSWORD and DB_PASSWORD_FILE) are set, the original variable will be used.
 
-The following _FILE variables are supported:
+The following \_FILE variables are supported:
 
-* DB_PASSWORD_FILE
-* REDIS_PASSWORD_FILE
-* MAIL_PASSWORD_FILE
-* ADMIN_PASSWORD_FILE
+- DB_PASSWORD_FILE
+- REDIS_PASSWORD_FILE
+- MAIL_PASSWORD_FILE
+- ADMIN_PASSWORD_FILE
 
 ## Available environment variables and defaults
 
@@ -188,17 +190,17 @@ If you do not provide environment variables or `.env` file, the [example .env fi
 
 Some variables are specific to Docker, and the default values are :
 
-* `PUID=1000`
-* `PGID=1000`
-* `USER=invoiceshelf`
-* `PHP_TZ=UTC`
-* `STARTUP_DELAY=0`
+- `PUID=1000`
+- `PGID=1000`
+- `USER=invoiceshelf`
+- `PHP_TZ=UTC`
+- `STARTUP_DELAY=0`
 
 Additionally, if `SKIP_PERMISSIONS_CHECKS` is set to "yes", the entrypoint script will not check or set the permissions of files and directories on startup. Users are strongly advised **against** using this option, and efforts have been made to keep the checks as fast as possible. Nonetheless, it may be suitable for some advanced use cases.
 
 ## Advanced configuration
 
-If you want to  customize PHP the configuration, the first method is to mount a custom `php.ini` to `/etc/php/8.2/fpm/php.ini` when starting the container. However, this method is kind of brutal as it will override all parameters. It will also need to be remapped whenever an image is released with a new version of PHP.
+If you want to customize PHP the configuration, the first method is to mount a custom `php.ini` to `/etc/php/8.2/fpm/php.ini` when starting the container. However, this method is kind of brutal as it will override all parameters. It will also need to be remapped whenever an image is released with a new version of PHP.
 
 Instead, we recommend to use the `PHP_VALUE` directive of PHP-FPM to override specific parameters. To do so, you will need to mount a custom `nginx.conf` in your container :
 
@@ -213,3 +215,21 @@ If you need to add (not change) nginx directives, files mounted in `/etc/nginx/c
 [arm64-shield]: https://img.shields.io/badge/arm64-yes-success.svg?style=flat
 [amd64-shield]: https://img.shields.io/badge/amd64-yes-success.svg?style=flat
 [armv7-shield]: https://img.shields.io/badge/armv7-yes-success.svg?style=flat
+
+## Email
+
+### Mailgun Configuration
+
+To configure Mailgun, you need to set the following environment variables:
+
+```bash
+MAIL_DRIVER=mailgun
+MAILGUN_DOMAIN=mg.<your-domain>.com
+MAILGUN_SECRET=<mailgun-api-key>
+MAILGUN_ENDPOINT=<api.mailgun.net | api.eu.mailgun.net>
+MAIL_FROM_NAME=support@terrafir.com
+MAIL_FROM_ADDRESS=support@terrafir.com
+```
+
+Update these variables in the InvoiceShelf UI under Account (Top Right) > Settings > Mail Configuration.
+Refresh the page to see the changes. Perform a test by sending an email to yourself.

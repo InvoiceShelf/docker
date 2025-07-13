@@ -1,3 +1,4 @@
+---
 #-------------------------------------------
 # InvoiceShelf PostgreSQL docker-compose variant
 # Repo : https://github.com/InvoiceShelf/docker
@@ -19,7 +20,9 @@ services:
       - invoiceshelf
     restart: unless-stopped
   invoiceshelf:
-    image: invoiceshelf/invoiceshelf:nightly
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: invoiceshelf
     ports:
       - 90:80

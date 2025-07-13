@@ -70,6 +70,7 @@ RUN \
     mv InvoiceShelf/$BRANCH InvoiceShelf/.git/refs/heads/$BRANCH && \
     echo "$TARGET" > /var/www/html/InvoiceShelf/docker_target && \
     cd /var/www/html/InvoiceShelf && \
+    composer require symfony/mailgun-mailer symfony/http-client --no-scripts --no-interaction && \
     composer install --prefer-dist && \
     find . -wholename '*/[Tt]ests/*' -delete && \
     find . -wholename '*/[Tt]est/*' -delete && \
