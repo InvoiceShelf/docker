@@ -26,6 +26,7 @@ services:
     volumes:
       - ./invoiceshelf_pgsql/data:/data
       - ./invoiceshelf_pgsql/conf:/conf
+      - ./invoiceshelf_sqlite/Modules:/Modules
     networks:
       - invoiceshelf
     environment:
