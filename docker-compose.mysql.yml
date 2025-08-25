@@ -32,6 +32,7 @@ services:
     volumes:
       - ./invoiceshelf_mysql/data:/data
       - ./invoiceshelf_mysql/conf:/conf
+      - ./invoiceshelf_sqlite/Modules:/Modules
     networks:
       - invoiceshelf
     environment:
