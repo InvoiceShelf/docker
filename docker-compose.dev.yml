@@ -23,6 +23,7 @@ services:
     volumes:
       - ./invoiceshelf_sqlite/data:/data
       - ./invoiceshelf_sqlite/conf:/conf
+      - ./invoiceshelf_sqlite/Modules:/Modules  
     networks:
       - invoiceshelf
     environment:
