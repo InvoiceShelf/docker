@@ -4,46 +4,36 @@
 #-------------------------------------------
 
 services:
-  invoiceshelf_db:
-    container_name: invoiceshelf_db
+  database:
+    container_name: invoiceshelf-mariadb
     image: mariadb:10
     environment:
       - MYSQL_DATABASE=invoiceshelf
       - MYSQL_USER=invoiceshelf
-      - MYSQL_PASSWORD="somepass"
+      - MYSQL_PASSWORD=somepass
       - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=true
-    expose:
-      - 3306
     volumes:
-      - mysql:/var/lib/mysql
+      - invoiceshelf_mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
     networks:
       - invoiceshelf
-    restart: unless-stopped
     healthcheck:
       test: ["CMD", "mariadb-admin" ,"ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
+    restart: unless-stopped
 
-  invoiceshelf:
-    image: invoiceshelf/invoiceshelf:nightly
-    container_name: invoiceshelf
-    ports:
-      - 90:80
-    volumes:
-      - ./invoiceshelf_mysql/data:/data
-      - ./invoiceshelf_mysql/conf:/conf
-    networks:
-      - invoiceshelf
+  webapp:
+    container_name: invoiceshelf-sqlite
+    image: invoiceshelf:nightly
     environment:
-      # PHP timezone e.g. PHP_TZ=America/New_York
-      - PHP_TZ=UTC
-      - TIMEZONE=UTC
       - APP_NAME=Laravel
       - APP_ENV=local
       - APP_DEBUG=true
-      - APP_URL=http://localhost:90
+      - APP_URL=http://localhost:8090
       - DB_CONNECTION=mysql
-      - DB_HOST=invoiceshelf_db
+      - DB_HOST=database
       - DB_PORT=3306
       - DB_DATABASE=invoiceshelf
       - DB_USERNAME=invoiceshelf
@@ -51,25 +41,28 @@ services:
       - DB_PASSWORD_FILE=
       - CACHE_STORE=file
       - SESSION_DRIVER=file
-      - SESSION_LIFETIME=120
-      - SESSION_ENCRYPT=false
-      - SESSION_PATH=/
+      - SESSION_LIFETIME=240
       - SESSION_DOMAIN=localhost
-      - SANCTUM_STATEFUL_DOMAINS=localhost:90
-      - STARTUP_DELAY=
-      #- MAIL_DRIVER=smtp
+      - SANCTUM_STATEFUL_DOMAINS=localhost:8090
+      #- MAIL_MAILER=smtp
       #- MAIL_HOST=smtp.mailtrap.io
       #- MAIL_PORT=2525
       #- MAIL_USERNAME=null
       #- MAIL_PASSWORD=null
       #- MAIL_PASSWORD_FILE=<filename>
       #- MAIL_ENCRYPTION=null
+    volumes:
+      - ./invoiceshelf/storage:/var/www/html/storage/
+    ports:
+      - "8090:8080" # 8090 is the public port.
+    networks:
+      - invoiceshelf
     restart: unless-stopped
     depends_on:
-      - invoiceshelf_db
+      - database
 
 networks:
   invoiceshelf:
 
 volumes:
-  mysql:
+  invoiceshelf_mysql:

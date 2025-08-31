@@ -1,6 +1,2 @@
 .idea/
-docker-compose.yml
-invoiceshelf_mysql/
-invoiceshelf_pgsql/
-invoiceshelf_sqlite/
 invoiceshelf/

@@ -1,54 +1,44 @@
 #-------------------------------------------
-# InvoiceShelf PostgreSQL docker-compose variant
+# InvoiceShelf PostgresSQL docker-compose variant
 # Repo : https://github.com/InvoiceShelf/docker
 #-------------------------------------------
 
 services:
-  invoiceshelf_db:
+  database:
     container_name: invoiceshelf_db
     image: postgres:15
-    ports:
-      - 5432:5432
-    volumes:
-      - postgres:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=somepass
       - POSTGRES_USER=invoiceshelf
       - POSTGRES_DB=invoiceshelf
+    volumes:
+      - invoiceshelf_postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     networks:
       - invoiceshelf
     restart: unless-stopped
-  invoiceshelf:
+
+  webapp:
     image: invoiceshelf/invoiceshelf:nightly
     container_name: invoiceshelf
-    ports:
-      - 90:80
-    volumes:
-      - ./invoiceshelf_pgsql/data:/data
-      - ./invoiceshelf_pgsql/conf:/conf
-    networks:
-      - invoiceshelf
     environment:
-      - PHP_TZ=UTC
-      - TIMEZONE=UTC
       - APP_NAME=Laravel
       - APP_ENV=local
       - APP_DEBUG=true
-      - APP_URL=http://localhost:90
+      - APP_URL=http://localhost:8090
       - DB_CONNECTION=pgsql
-      - DB_HOST=invoiceshelf_db
+      - DB_HOST=database
       - DB_PORT=5432
       - DB_DATABASE=invoiceshelf
       - DB_USERNAME=invoiceshelf
       - DB_PASSWORD=somepass
+      - DB_PASSWORD_FILE=
       - CACHE_STORE=file
       - SESSION_DRIVER=file
-      - SESSION_LIFETIME=120
-      - SESSION_ENCRYPT=false
-      - SESSION_PATH=/
+      - SESSION_LIFETIME=240
       - SESSION_DOMAIN=localhost
-      - SANCTUM_STATEFUL_DOMAINS=localhost:90
-      - STARTUP_DELAY=10
+      - SANCTUM_STATEFUL_DOMAINS=localhost:8090
       #- MAIL_DRIVER=smtp
       #- MAIL_HOST=smtp.mailtrap.io
       #- MAIL_PORT=2525
@@ -56,12 +46,18 @@ services:
       #- MAIL_PASSWORD=null
       #- MAIL_PASSWORD_FILE=<filename>
       #- MAIL_ENCRYPTION=null
+    volumes:
+      - ./invoiceshelf/storage:/var/www/html/storage/
+    ports:
+      - "8090:8080" # 8090 is the public port.
+    networks:
+      - invoiceshelf
     restart: unless-stopped
     depends_on:
-      - invoiceshelf_db
+      - database
 
 networks:
   invoiceshelf:
 
 volumes:
-  postgres:
+  invoiceshelf_postgres:
