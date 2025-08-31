@@ -26,40 +26,7 @@ As you can see in the above table, all docker tags have different purpose. To su
 
 The best of both worlds (stable/unstable) is **invoiceshelf/invoiceshelf:nightly**. This way you have tested changes that aren't yet released but are definitely making their way into the upcoming release.
 
-## Quick-start without Docker Compose
-
-To use the built-in SQLite, no external dependencies are required. At its simplest:
-
-```bash  
-docker run -d \
-    --name=invoiceshelf \
-    -v ./invoiceshelf/storage:/var/www/html/storage \
-    -v ./invoiceshelf/database/database.sqlite:/var/www/html/database/database.sqlite \
-    -e CONTAINERIZED=true \
-    -e APP_NAME=InvoiceShelf \
-    -e APP_ENV=production \
-    -e APP_DEBUG=false \
-    -e APP_URL=http://localhost:8090 \
-    -e DB_CONNECTION=sqlite \
-    -e DB_DATABASE=/var/www/html/database/database.sqlite \
-    -e CACHE_STORE=file \
-    -e SESSION_DRIVER=file \
-    -e SESSION_LIFETIME=240 \
-    -e SESSION_DOMAIN=localhost \
-    -e SANCTUM_STATEFUL_DOMAINS=localhost:8090 \
-    -p 8090:8080 \
-    invoiceshelf/invoiceshelf:nightly
-```
-
-This will start the InvoiceShelf instance on port 8090. The data will be persisted in ./invoiceshelf/storage for the `storage` directory and `./invoiceshelf/database` for the SQLite database.
-
-For more runtime options, look below in:
-
-* [Run with Docker Compose](#run-with-docker-compose) **(RECOMMENDED)**
-* [Run with Docker](#run-with-docker)
-* [Available environment variables and defaults](#available-environment-variables-and-defaults).
-
-## Quick-start with Docker Compose
+## Run with Docker Compose (Recommended)
 
 ### Docker-compose Usage
 
@@ -97,15 +64,30 @@ For more details see: [How tags work](#how-tags-work) section.
 
 ## Run with Docker
 
-### Database Prerequisites
+To use the built-in SQLite, no external dependencies are required. At its simplest:
 
-To use this image with MySQL, MariaDB or PostgresSQL, you will need a suitable database running externally.
+```bash  
+docker run -d \
+    --name=invoiceshelf \
+    -v ./invoiceshelf/storage:/var/www/html/storage \
+    -v ./invoiceshelf/database/database.sqlite:/var/www/html/database/database.sqlite \
+    -e CONTAINERIZED=true \
+    -e APP_NAME=InvoiceShelf \
+    -e APP_ENV=production \
+    -e APP_DEBUG=false \
+    -e APP_URL=http://localhost:8090 \
+    -e DB_CONNECTION=sqlite \
+    -e DB_DATABASE=/var/www/html/database/database.sqlite \
+    -e CACHE_STORE=file \
+    -e SESSION_DRIVER=file \
+    -e SESSION_LIFETIME=240 \
+    -e SESSION_DOMAIN=localhost \
+    -e SANCTUM_STATEFUL_DOMAINS=localhost:8090 \
+    -p 8090:8080 \
+    invoiceshelf/invoiceshelf:nightly
+```
 
-1. Create the db, username, password.
-2. Edit the environment variables (db credentials, language...) by :
-   * Supplying the environment variables via `docker run` / `docker-compose` **or**
-   * Creating a `.env` file with the appropriate info and mount it to `/conf/.env` **or**
-   * Use the InvoiceShelf installer by passing `-e DB_CONNECTION=` on the command line and connecting to the container with your browser
+This will start the InvoiceShelf instance on port 8090. The data will be persisted in ./invoiceshelf/storage for the `storage` directory and `./invoiceshelf/database` for the SQLite database.
 
 ## Advanced configuration
 
