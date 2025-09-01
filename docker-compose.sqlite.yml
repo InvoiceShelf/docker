@@ -5,13 +5,12 @@
 
 services:
   webapp:
-    image: invoiceshelf:nightly
-    container_name: invoiceshelf-sqlite
+    image: invoiceshelf/invoiceshelf:nightly
+    container_name: invoiceshelf-variant-sqlite
     ports:
       - "8090:8080" # 8090 is the public port.
     volumes:
-      - ./invoiceshelf/storage:/var/www/html/storage
-      - ./invoiceshelf/database/database.sqlite:/var/www/html/database/database.sqlite
+      - invoiceshelf_storage:/var/www/html/storage
     networks:
       - invoiceshelf
     environment:
@@ -20,7 +19,7 @@ services:
       - APP_DEBUG=false
       - APP_URL=http://localhost:8090
       - DB_CONNECTION=sqlite
-      - DB_DATABASE=/var/www/html/database/database.sqlite # please don't touch this!
+      - DB_DATABASE=/var/www/html/storage/app/database.sqlite # please don't touch this!
       - CACHE_STORE=file
       - SESSION_DRIVER=file
       - SESSION_LIFETIME=240
@@ -37,3 +36,6 @@ services:
 
 networks:
   invoiceshelf:
+
+volumes:
+  invoiceshelf_storage:

@@ -1,5 +1,5 @@
 #-------------------------------------------
-# InvoiceShelf MySQL docker-compose variant
+# InvoiceShelf MySQL/MariaDB docker-compose variant
 # Repo : https://github.com/InvoiceShelf/docker
 #-------------------------------------------
 
@@ -13,7 +13,7 @@ services:
       - MYSQL_PASSWORD=somepass
       - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=true
     volumes:
-      - invoiceshelf_mysql:/var/lib/mysql
+      - invoiceshelf_mariadb:/var/lib/mysql
     ports:
       - "3306:3306"
     networks:
@@ -25,14 +25,14 @@ services:
     restart: unless-stopped
 
   webapp:
-    container_name: invoiceshelf-sqlite
-    image: invoiceshelf:nightly
+    container_name: invoiceshelf-variant-mariadb
+    image: invoiceshelf/invoiceshelf:nightly
     environment:
       - APP_NAME=Laravel
       - APP_ENV=local
       - APP_DEBUG=true
       - APP_URL=http://localhost:8090
-      - DB_CONNECTION=mysql
+      - DB_CONNECTION=mariadb
       - DB_HOST=database
       - DB_PORT=3306
       - DB_DATABASE=invoiceshelf
@@ -52,7 +52,7 @@ services:
       #- MAIL_PASSWORD_FILE=<filename>
       #- MAIL_ENCRYPTION=null
     volumes:
-      - ./invoiceshelf/storage:/var/www/html/storage/
+      - invoiceshelf_storage:/var/www/html/storage/
     ports:
       - "8090:8080" # 8090 is the public port.
     networks:
@@ -65,4 +65,5 @@ networks:
   invoiceshelf:
 
 volumes:
-  invoiceshelf_mysql:
+  invoiceshelf_mariadb:
+  invoiceshelf_storage:

@@ -5,7 +5,7 @@
 
 services:
   database:
-    container_name: invoiceshelf_db
+    container_name: invoiceshelf-pgsql
     image: postgres:15
     environment:
       - POSTGRES_PASSWORD=somepass
@@ -21,11 +21,11 @@ services:
 
   webapp:
     image: invoiceshelf/invoiceshelf:nightly
-    container_name: invoiceshelf
+    container_name: invoiceshelf-variant-pgsql
     environment:
-      - APP_NAME=Laravel
-      - APP_ENV=local
-      - APP_DEBUG=true
+      - APP_NAME=InvoiceShelf
+      - APP_ENV=production
+      - APP_DEBUG=false
       - APP_URL=http://localhost:8090
       - DB_CONNECTION=pgsql
       - DB_HOST=database
@@ -47,7 +47,7 @@ services:
       #- MAIL_PASSWORD_FILE=<filename>
       #- MAIL_ENCRYPTION=null
     volumes:
-      - ./invoiceshelf/storage:/var/www/html/storage/
+      - invoiceshelf_storage:/var/www/html/storage/
     ports:
       - "8090:8080" # 8090 is the public port.
     networks:
@@ -61,3 +61,4 @@ networks:
 
 volumes:
   invoiceshelf_postgres:
+  invoiceshelf_storage:
