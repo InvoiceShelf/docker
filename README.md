@@ -28,7 +28,7 @@ The best of both worlds (stable/unstable) is **invoiceshelf/invoiceshelf:nightly
 
 ## Run with Docker Compose (Recommended)
 
-### Docker-compose Usage
+### 1. Docker-compose Usage
 
 The recommended way to run InvoiceShelf is by using the provided docker-compose.yaml files within this repository.
 
@@ -41,9 +41,11 @@ The desired workflow is basically as follows:
 3. Change the environment variables to reflect your desired setup
 4. Execute `docker compose up` to run it, and `docker compose down` to shut down
 
-### Docker-compose Upgrade
+### 2. Docker-compose Upgrade
 
-To upgrade the image, you should do the following:
+Once a new version of InvoiceShelf is released, we also release a new Docker image.
+
+To pull the latest version, you need to spin down, pull, rebuild and spin up again.
 
 1. Shut down your current environment:
    `docker compose down`
@@ -54,13 +56,11 @@ To upgrade the image, you should do the following:
 4. Prune/clean up the old/unused images:
    `docker image prune`
 
-### Docker-compose Image Tags
+### 3. Docker-compose Image Tags
 
 By default, all the provided docker-compose.{db}.yaml files are using the `:nightly` tag. The :nightly tag is updated every night with the latest stable code from the `master` branch.
 
 For more details see: [How tags work](#how-tags-work) section.
-
-**Note**: After switching to different tag, you need to rebuild by following the [Compose Upgrade](#compose-upgrade) guide above.
 
 ## Run with Docker
 
@@ -70,8 +70,6 @@ To use the built-in SQLite, no external dependencies are required. At its simple
 docker run -d \
     --name=invoiceshelf \
     -v ./invoiceshelf/storage:/var/www/html/storage \
-    -v ./invoiceshelf/database/database.sqlite:/var/www/html/database/database.sqlite \
-    -e CONTAINERIZED=true \
     -e APP_NAME=InvoiceShelf \
     -e APP_ENV=production \
     -e APP_DEBUG=false \
