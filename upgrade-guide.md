@@ -57,7 +57,7 @@ DB_CONNECTION=sqlite
 DB_DATABASE=/var/www/html/storage/app/database.sqlite
 ```
 
-> If you used a slightly different folder name (e.g., `invoiceshelf_sqlite`), adjust the paths accordingly.
+> If you used a slightly different folder name, adjust the paths accordingly.
 
 ---
 
@@ -105,14 +105,9 @@ docker volume inspect {compose_project}_invoiceshelf_storage
 
 Where `{compose_project}` is the name of your directory where the docker compose is located. If you cloned this repository it will be `docker`.
 
-2) Copy your current storage content into the volume (example using Alpine):
-```bash
-# Adjust the left-hand path to your current host storage folder
-docker run --rm   -v {compose_project}_invoiceshelf_storage:/dst   -v "$(pwd)/invoiceshelf/data":/src   alpine sh -c 'cp -a /src/. /dst/'
-```
+2) Copy your current storage content into the volume
 
 > If you prefer, you can also start the container once and use `docker cp` to move files into `/var/www/html/storage`.
-
 
 ---
 
