@@ -1,6 +1,12 @@
 
 ![Supports amd64 Architecture][amd64-shield]  ![Supports arm64/aarch64 Architecture][arm64-shield]  ![Supports armv7 Architecture][armv7-shield]
 
+## 📢 Attention! 📢
+
+For those that are using InvoiceShelf docker, as of **01 Sep, 2025** we made some changes to the docker image.
+
+[Full upgrade guide] (https://github.com/InvoiceShelf/docker/blob/master/upgrade-guide.md)
+
 ## Introduction
 
 This image features InvoiceShelf, nginx and PHP-FPM. The provided configuration (PHP, nginx...) follows InvoiceShelf's official recommendations and is meant to be used by end-users.
