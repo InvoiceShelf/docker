@@ -3,9 +3,9 @@
 
 ## 📢 Attention! 📢
 
-For those that are using InvoiceShelf docker, as of **01 Sep, 2025** we made some changes to the docker image.
+For those that are using InvoiceShelf docker, as of **01 Sep, 2025** we made some changes to the docker image:
 
-[Full upgrade guide](https://github.com/InvoiceShelf/docker/blob/master/upgrade-guide.md)
+[[Full upgrade guide]](https://github.com/InvoiceShelf/docker/blob/master/upgrade-guide.md)
 
 ## Introduction
 
