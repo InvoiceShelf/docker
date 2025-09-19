@@ -38,6 +38,7 @@ services:
       - SANCTUM_STATEFUL_DOMAINS=localhost:8090
     volumes:
       - invoiceshelf_storage:/var/www/html/storage/
+      - invoiceshelf_modules:/var/www/html/Modules/
     ports:
       - "8090:8080" # 8090 is the public port.
     networks:
@@ -52,3 +53,4 @@ networks:
 volumes:
   invoiceshelf_postgres:
   invoiceshelf_storage:
+  invoiceshelf_modules:

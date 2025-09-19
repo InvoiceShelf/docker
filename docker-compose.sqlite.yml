@@ -10,7 +10,8 @@ services:
     ports:
       - "8090:8080" # 8090 is the public port.
     volumes:
-      - invoiceshelf_storage:/var/www/html/storage
+      - invoiceshelf_storage:/var/www/html/storage/
+      - invoiceshelf_modules:/var/www/html/Modules/
     networks:
       - invoiceshelf
     environment:
@@ -29,3 +30,4 @@ networks:
 
 volumes:
   invoiceshelf_storage:
+  invoiceshelf_modules:
