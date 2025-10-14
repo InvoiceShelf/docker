@@ -101,15 +101,6 @@ body:
     validations:
       required: true
 
-  # PHP Version
-  - type: input
-    id: php-version
-    attributes:
-      label: PHP version
-      placeholder: v0.0.0
-    validations:
-      required: true
-
   # DB Type
   - type: input
     id: database-type
@@ -135,7 +126,7 @@ body:
       label: Web Browser
       placeholder: "Firefox / Safari / or any other (chromium based browser)"
 
-  # OS Version
+  # Host OS Version
   - type: input
     id: server-os
     attributes:
@@ -183,7 +174,7 @@ body:
   - type: textarea
     id: log-laravel
     attributes:
-      label: Laravel/PHP logs
+      label: Laravel/PHP/Container logs
       description: Please provide logs from either PHP or Laravel or both.
       placeholder: >-
         2023-04-12 10:15:32 [NGINX] 172.16.0.5 - - [12/Apr/2023:10:15:32 +0000] "GET /index.html HTTP/1.1" 200 1024 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
@@ -192,6 +183,18 @@ body:
         2023-04-12 10:15:35 [NGINX] 172.16.0.11 - - [12/Apr/2023:10:15:35 +0000] "PUT /api/v1/users/123 HTTP/1.1" 200 - "https://example.com/profile" "Mozilla/5.0 (iPhone; CPU iPhone OS 14_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1"
         2023-04-12 10:15:36 [NGINX] 172.16.0.13 - - [12/Apr/2023:10:15:36 +0000] "DELETE /api/v1/products/456 HTTP/1.1" 204 - "-" "Dalvik/2.1.0 (Linux; U; Android 10; Pixel 4 Build/QD1A.190821.014.C2)"
         2023-04-12 10:15:37 [NGINX] 172.16.0.15 - - [12/Apr/2023:10:15:37 +0000] "GET /easter-egg HTTP/1.1" 200 42 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.3"
+      render: irc logs
+
+  # PHP/Laravel Logs
+  - type: textarea
+    id: log-other
+    attributes:
+      label: Other logs
+      description: if there are other logs you think could be useful please past them here.
+      placeholder: >-
+        log line 1
+        log line 2
+        log line 3
       render: irc logs
 
   # Special thanks
