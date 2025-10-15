@@ -93,6 +93,18 @@ docker run -d \
 
 This will start the InvoiceShelf instance on port 8090. The data will be persisted in ./invoiceshelf/storage for the `storage` directory and `./invoiceshelf/database` for the SQLite database.
 
+## Running the Docker containers with the Reverse Proxies
+
+If one's spinning up the Docker Compose stack with reverse proxies and domain binding, it is highly suggested to set up the following docker enviromental variables:
+
+```
+APP_URL=https://<subdomain-if-any>.<domain>.<ltd> # Be sure to include http(s):// part!
+SESSION_DOMAIN=.<yourdomain>.<ltd>  # Mind the first dot! 
+SANCTUM_STATEFUL_DOMAINS=<subdomain-if-any>.<domain>.<ltd> # Ensure you have NOT set up http(s):// part there!
+```
+
+Setting up these enviromental variables allows you to do the Domain Verification step with no errors at domain checks.
+
 ## Advanced configuration
 
 InvoiceShelf images are built on top of the `serversideup/php` image. 
