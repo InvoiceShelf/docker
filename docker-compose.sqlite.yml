@@ -18,11 +18,31 @@ services:
       - APP_NAME=InvoiceShelf
       - APP_ENV=production
       - APP_DEBUG=false
+
+      # APP_URL should have:
+      # 1. Protocol http or https if you are accessing it via reverse proxy with
+      #    SSL, then it will be https, if via local IP, then http.
+      # 2. IP address of the server or the domain name
+      # 3. (optional) If you are using a custom port such as :8080 or another.
+      # REF: https://github.com/InvoiceShelf/InvoiceShelf/issues/213#issuecomment-3026790543
       - APP_URL=http://localhost:8090
-      - DB_CONNECTION=sqlite
-      - DB_DATABASE=/var/www/html/storage/app/database.sqlite # please don't touch this!
+
+      # SESSION_DOMAIN should have:
+      # 1. IP address of the server or the domain name
+      # 2. (optional) If you are using a custom port such as :8080 or another.
+      # REF: https://github.com/InvoiceShelf/InvoiceShelf/issues/213#issuecomment-3026790543
       - SESSION_DOMAIN=localhost
+
+      # SANCTUM_STATEFUL_DOMAINS should have:
+      # 1. IP address of the server or the domain name
+      #    1.1 (optional) If you are using a custom port such as :8080 or another.
+      # 2. (optional) If you are planning to access the application from different
+      #    domains, you must add a comma between each domain
+      # REF: https://github.com/InvoiceShelf/InvoiceShelf/issues/213#issuecomment-3026790543
       - SANCTUM_STATEFUL_DOMAINS=localhost:8090
+
+      - DB_CONNECTION=sqlite
+      - DB_DATABASE=/var/www/html/storage/app/database.sqlite # ❌️📝 PLEASE DON'T EDIT THIS LINE - unless you know what you are doing
     restart: unless-stopped
 
 networks:

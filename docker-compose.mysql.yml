@@ -8,14 +8,12 @@ services:
     container_name: invoiceshelf-mariadb
     image: mariadb:10
     environment:
-      - MYSQL_DATABASE=invoiceshelf
-      - MYSQL_USER=invoiceshelf
-      - MYSQL_PASSWORD=somepass
-      - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=true
+      - MYSQL_DATABASE=invoiceshelf # ⚠️ Change DB name before proceeding
+      - MYSQL_USER=invoiceshelf # ⚠️ Change DB username before proceeding
+      - MYSQL_PASSWORD=somepass # ⚠️ Change DB password before proceeding
+      - MYSQL_ROOT_PASSWORD=Ch@ng3_nn3 # 🚨 Change root password before proceeding
     volumes:
       - invoiceshelf_mariadb:/var/lib/mysql
-    ports:
-      - "3306:3306"
     networks:
       - invoiceshelf
     healthcheck:
@@ -31,16 +29,36 @@ services:
       - APP_NAME=Laravel
       - APP_ENV=local
       - APP_DEBUG=true
+
+      # APP_URL should have:
+      # 1. Protocol http or https if you are accessing it via reverse proxy with
+      #    SSL, then it will be https, if via local IP, then http.
+      # 2. IP address of the server or the domain name
+      # 3. (optional) If you are using a custom port such as :8080 or another.
+      # REF: https://github.com/InvoiceShelf/InvoiceShelf/issues/213#issuecomment-3026790543
       - APP_URL=http://localhost:8090
+
+      # SESSION_DOMAIN should have:
+      # 1. IP address of the server or the domain name
+      # 2. (optional) If you are using a custom port such as :8080 or another.
+      # REF: https://github.com/InvoiceShelf/InvoiceShelf/issues/213#issuecomment-3026790543
+      - SESSION_DOMAIN=localhost
+
+      # SANCTUM_STATEFUL_DOMAINS should have:
+      # 1. IP address of the server or the domain name
+      #    1.1 (optional) If you are using a custom port such as :8080 or another.
+      # 2. (optional) If you are planning to access the application from different
+      #    domains, you must add a comma between each domain
+      # REF: https://github.com/InvoiceShelf/InvoiceShelf/issues/213#issuecomment-3026790543
+      - SANCTUM_STATEFUL_DOMAINS=localhost:8090
+
       - DB_CONNECTION=mariadb
       - DB_HOST=database
       - DB_PORT=3306
-      - DB_DATABASE=invoiceshelf
-      - DB_USERNAME=invoiceshelf
-      - DB_PASSWORD=somepass
+      - DB_DATABASE=invoiceshelf # ⚠️ Change DB name before proceeding
+      - DB_USERNAME=invoiceshelf # ⚠️ Change DB username before proceeding
+      - DB_PASSWORD=somepass # ⚠️ Change DB password before proceeding
       - DB_PASSWORD_FILE=
-      - SESSION_DOMAIN=localhost
-      - SANCTUM_STATEFUL_DOMAINS=localhost:8090
     volumes:
       - invoiceshelf_storage:/var/www/html/storage/
       - invoiceshelf_modules:/var/www/html/Modules/
