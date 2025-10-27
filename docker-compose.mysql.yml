@@ -29,7 +29,29 @@ services:
       - APP_NAME=Laravel
       - APP_ENV=local
       - APP_DEBUG=true
+
+      # APP_URL should have:
+      # 1. Protocol http or https if you are accessing it via reverse proxy with
+      #    SSL, then it will be https, if via local IP, then http.
+      # 2. IP address of the server or the domain name
+      # 3. (optional) If you are using a custom port such as :8080 or another.
+      # REF: https://github.com/InvoiceShelf/InvoiceShelf/issues/213#issuecomment-3026790543
       - APP_URL=http://localhost:8090
+
+      # SESSION_DOMAIN should have:
+      # 1. IP address of the server or the domain name
+      # 2. (optional) If you are using a custom port such as :8080 or another.
+      # REF: https://github.com/InvoiceShelf/InvoiceShelf/issues/213#issuecomment-3026790543
+      - SESSION_DOMAIN=localhost
+
+      # SANCTUM_STATEFUL_DOMAINS should have:
+      # 1. IP address of the server or the domain name
+      #    1.1 (optional) If you are using a custom port such as :8080 or another.
+      # 2. (optional) If you are planning to access the application from different
+      #    domains, you must add a comma between each domain
+      # REF: https://github.com/InvoiceShelf/InvoiceShelf/issues/213#issuecomment-3026790543
+      - SANCTUM_STATEFUL_DOMAINS=localhost:8090
+
       - DB_CONNECTION=mariadb
       - DB_HOST=database
       - DB_PORT=3306
@@ -37,8 +59,6 @@ services:
       - DB_USERNAME=invoiceshelf # ⚠️ Change DB username before proceeding
       - DB_PASSWORD=somepass # ⚠️ Change DB password before proceeding
       - DB_PASSWORD_FILE=
-      - SESSION_DOMAIN=localhost
-      - SANCTUM_STATEFUL_DOMAINS=localhost:8090
     volumes:
       - invoiceshelf_storage:/var/www/html/storage/
       - invoiceshelf_modules:/var/www/html/Modules/
