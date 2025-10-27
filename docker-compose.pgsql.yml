@@ -8,13 +8,11 @@ services:
     container_name: invoiceshelf-pgsql
     image: postgres:15
     environment:
-      - POSTGRES_PASSWORD=somepass
-      - POSTGRES_USER=invoiceshelf
-      - POSTGRES_DB=invoiceshelf
+      - POSTGRES_PASSWORD=somepass # ⚠️ Change DB password before proceeding
+      - POSTGRES_USER=invoiceshelf # ⚠️ Change DB username before proceeding
+      - POSTGRES_DB=invoiceshelf # 🚨 Change DB name before proceeding
     volumes:
       - invoiceshelf_postgres:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
     networks:
       - invoiceshelf
     restart: unless-stopped
@@ -30,9 +28,9 @@ services:
       - DB_CONNECTION=pgsql
       - DB_HOST=database
       - DB_PORT=5432
-      - DB_DATABASE=invoiceshelf
-      - DB_USERNAME=invoiceshelf
-      - DB_PASSWORD=somepass
+      - DB_DATABASE=invoiceshelf # ⚠️ Change DB name before proceeding
+      - DB_USERNAME=invoiceshelf # ⚠️ Change DB username before proceeding
+      - DB_PASSWORD=somepass # ⚠️ Change DB password before proceeding
       - DB_PASSWORD_FILE=
       - SESSION_DOMAIN=localhost
       - SANCTUM_STATEFUL_DOMAINS=localhost:8090
