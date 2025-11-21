@@ -1,0 +1,64 @@
+services:
+  invoiceshelf:
+    image: 'invoiceshelf/invoiceshelf:nightly'
+    container_name: invoiceshelf-variant-pgsql
+    environment:
+      - SERVICE_FQDN_INVOICESHELF
+      - PHP_TZ=UTC
+      - TIMEZONE=UTC
+      - APP_NAME=InvoiceShelf
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - 'APP_URL=https://${SERVICE_FQDN_INVOICESHELF_8080}'
+      - 'APP_KEY=base64:${SERVICE_BASE64_INVOICESHELF}'
+      - 'SESSION_DOMAIN=${SERVICE_FQDN_INVOICESHELF_8080}'
+      - 'SANCTUM_STATEFUL_DOMAINS=${SERVICE_FQDN_INVOICESHELF_8080}'
+      - 'TRUSTED_PROXIES=*'
+      - CACHE_STORE=file
+      - SESSION_DRIVER=file
+      - SESSION_LIFETIME=120
+      - SESSION_ENCRYPT=false
+      - SESSION_PATH=/
+      - DB_CONNECTION=pgsql
+      - 'DB_HOST=${POSTGRESQL_HOST:?database}'
+      - 'DB_PORT=${POSTGRESQL_PORT:?5432}'
+      - 'DB_DATABASE=${POSTGRESQL_DATABASE:?invoiceshelf}'
+      - 'DB_USERNAME=${SERVICE_USER_POSTGRESQL:?}'
+      - 'DB_PASSWORD=${SERVICE_PASSWORD_POSTGRESQL:?}'
+      - DB_PASSWORD_FILE=
+    volumes:
+      - 'invoiceshelf_storage:/var/www/html/storage/'
+      - 'invoiceshelf_modules:/var/www/html/Modules/'
+    networks:
+      - invoiceshelf
+    restart: unless-stopped
+    depends_on:
+      database:
+        condition: service_healthy
+
+  database:
+    container_name: invoiceshelf-pgsql
+    image: 'postgres:15-alpine'
+    environment:
+      - 'POSTGRES_USER=${SERVICE_USER_POSTGRESQL:?}'
+      - 'POSTGRES_PASSWORD=${SERVICE_PASSWORD_POSTGRESQL:?}'
+      - 'POSTGRES_DB=${POSTGRESQL_DATABASE:?invoiceshelf}'
+    volumes:
+      - 'invoiceshelf_postgres:/var/lib/postgresql/data'
+    networks:
+      - invoiceshelf
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - 'pg_isready -U ${SERVICE_USER_POSTGRESQL} -d ${POSTGRESQL_DATABASE}'
+      interval: 5s
+      timeout: 20s
+      retries: 10
+    restart: unless-stopped
+
+networks:
+  invoiceshelf: null
+volumes:
+  invoiceshelf_postgres: null
+  invoiceshelf_storage: null
+  invoiceshelf_modules: null
