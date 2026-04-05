@@ -54,6 +54,13 @@ services:
       - DB_USERNAME=invoiceshelf # ⚠️ Change DB username before proceeding
       - DB_PASSWORD=somepass # ⚠️ Change DB password before proceeding
       - DB_PASSWORD_FILE=
+      - CACHE_STORE=file
+      - SESSION_DRIVER=file
+      - SESSION_LIFETIME=240
+      - AUTORUN_ENABLED=true
+      - AUTORUN_LARAVEL_MIGRATION=false
+      - AUTORUN_LARAVEL_OPTIMIZE=false
+      - PHP_OPCACHE_ENABLE=1
     volumes:
       - invoiceshelf_storage:/var/www/html/storage/
       - invoiceshelf_modules:/var/www/html/Modules/

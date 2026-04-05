@@ -43,6 +43,13 @@ services:
 
       - DB_CONNECTION=sqlite
       - DB_DATABASE=/var/www/html/storage/app/database.sqlite # ❌️📝 PLEASE DON'T EDIT THIS LINE - unless you know what you are doing
+      - CACHE_STORE=file
+      - SESSION_DRIVER=file
+      - SESSION_LIFETIME=240
+      - AUTORUN_ENABLED=true
+      - AUTORUN_LARAVEL_MIGRATION=false
+      - AUTORUN_LARAVEL_OPTIMIZE=false
+      - PHP_OPCACHE_ENABLE=1
     restart: unless-stopped
 
 networks:
