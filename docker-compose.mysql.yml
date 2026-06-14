@@ -24,7 +24,7 @@ services:
 
   webapp:
     container_name: invoiceshelf-variant-mariadb
-    image: invoiceshelf/invoiceshelf:nightly
+    image: invoiceshelf/invoiceshelf:latest
     environment:
       - APP_NAME=InvoiceShelf
       - APP_ENV=production

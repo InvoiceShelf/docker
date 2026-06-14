@@ -1,3 +1,49 @@
+# Notice: Retiring `:nightly` / `:alpha` and a new tag scheme (as of 2026-06-14)
+
+Hello,
+
+We are **retiring nightly Docker builds**. Going forward, images are published **only on release**,
+and the tag scheme is simpler and safer for production:
+
+- `:latest` — newest **stable** release (the 2.x line today). The provided `docker-compose.*.yml`
+  files now default to `:latest`.
+- `:2` / `:2.4` / `:2.4.0` — pin a major / minor / exact version for a predictable setup.
+- `:beta` / `:next` — newest **3.x pre-release**, for testing the next major early. Not for
+  production, and it never moves `:latest`.
+
+`:latest` will move from 2.x to 3.x **only when 3.0 is released as stable** — a major upgrade is
+never applied silently on a routine `docker compose pull`.
+
+## What you need to do
+
+- **If you used `:nightly`** (the previous compose default): switch your image to `:latest`. For a
+  transition period `:nightly` is kept pointing at the same image as `:latest`, so even if you don't
+  change anything right away you will converge onto stable on your next `docker compose pull`.
+  **`:nightly` will eventually stop updating** — please migrate.
+- **If you used `:alpha` or `:dev`:** those were documented but never actually published. Use
+  `:beta` if you want to track the next major (3.x) early.
+
+```yaml
+services:
+  webapp:
+    image: invoiceshelf/invoiceshelf:latest   # was: :nightly
+```
+
+```bash
+docker compose pull
+docker compose up --force-recreate --build -d
+```
+
+> The in-app updater is disabled inside Docker — containers upgrade with `docker compose pull`,
+> not the in-app "Update" button.
+
+---
+
+Best regards,
+**Darko**
+
+---
+
 # Important Notice: Docker Image & Compose Changes (as of `2.2.0-alpha1` and 2025-09-01 Nightly Builds)
 
 Hello,

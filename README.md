@@ -15,22 +15,27 @@ This image features InvoiceShelf, nginx and PHP-FPM. The provided configuration 
 
 ## How tags work
 
-The following tags are available:
+Images are published **on release** (there are no nightly builds). The following tags are available:
 
-| Docker Tag       | Purpose | Source Branch            | Build Frequency |
-|------------------|--|--------------------------|--|
-| :latest, :number | Latest stable released version | master (stable release) | On release |
-| :nightly         | Latest stable unreleased version | master (pending release) | Nightly |
-| :alpha           | Latest alpha/unstable version | develop (latest code) | Nightly |
+| Docker Tag | Points at | Updated |
+|---|---|---|
+| `:latest` | Newest stable release (currently the 2.x line) | On every stable release |
+| `:2` / `:3` | Newest release of that major | On every release of that major |
+| `:2.4` / `:2.4.0` | Newest patch of that minor / that exact version | On release |
+| `:beta` / `:next` | Newest 3.x pre-release (alpha/beta) — **not for production** | On every 3.x pre-release |
+| `:3.0.0-beta.1` … | A specific pre-release, pinned | On release |
 
-As you can see in the above table, all docker tags have different purpose. To summarize:
+To summarize:
 
-- If you want to use **concrete version**, use :number (e.g. :2.0.0)
-- If you want the latest stable version that is **released**, use :latest
-- If you want the latest stable version that is **pending release**, use :nightly or :dev
-- If you want the very latest code,  **regardless of stability**, use :alpha
+- **Production (recommended):** use `:latest`, or pin a major (`:2`) or exact version (`:2.4.0`).
+- **Want to test 3.x early:** use `:beta` (or `:next`), knowing it is pre-release software.
+- `:latest` tracks the **2.x** stable line today and will move to **3.x** only once 3.0 is released
+  as stable — a 2.x→3.x major upgrade is never applied silently on a routine `docker compose pull`.
 
-The best of both worlds (stable/unstable) is **invoiceshelf/invoiceshelf:nightly**. This way you have tested changes that aren't yet released but are definitely making their way into the upcoming release.
+> **Deprecated:** `:nightly` is going away (and `:alpha`/`:dev` were never actually published).
+> For a transition period `:nightly` is kept pointing at `:latest` so existing setups converge onto
+> stable; it will then stop updating. Switch `:nightly` → `:latest` (and `:alpha` → `:beta`). See the
+> [upgrade guide](https://github.com/InvoiceShelf/docker/blob/master/upgrade-guide.md).
 
 ## Run with Docker Compose (Recommended)
 
@@ -64,7 +69,9 @@ To pull the latest version, you need to spin down, pull, rebuild and spin up aga
 
 ### 3. Docker-compose Image Tags
 
-By default, all the provided docker-compose.{db}.yaml files are using the `:nightly` tag. The :nightly tag is updated every night with the latest stable code from the `master` branch.
+By default, all the provided docker-compose.{db}.yaml files use the `:latest` tag, which tracks the
+newest stable release. For a more predictable production setup, pin a major (`:2`) or an exact
+version (`:2.4.0`) instead.
 
 For more details see: [How tags work](#how-tags-work) section.
 
@@ -88,7 +95,7 @@ docker run -d \
     -e SESSION_DOMAIN=localhost \
     -e SANCTUM_STATEFUL_DOMAINS=localhost:8090 \
     -p 8090:8080 \
-    invoiceshelf/invoiceshelf:nightly
+    invoiceshelf/invoiceshelf:latest
 ```
 
 This will start the InvoiceShelf instance on port 8090. The data will be persisted in ./invoiceshelf/storage for the `storage` directory and `./invoiceshelf/database` for the SQLite database.

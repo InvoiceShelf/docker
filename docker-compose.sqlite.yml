@@ -5,7 +5,7 @@
 
 services:
   webapp:
-    image: invoiceshelf/invoiceshelf:nightly
+    image: invoiceshelf/invoiceshelf:latest
     container_name: invoiceshelf-variant-sqlite
     ports:
       - "8090:8080" # 8090 is the public port.
