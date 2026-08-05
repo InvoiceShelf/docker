@@ -1,94 +1,90 @@
+# InvoiceShelf Docker
 
-![Supports amd64 Architecture][amd64-shield]  ![Supports arm64/aarch64 Architecture][arm64-shield]  ![Supports armv7 Architecture][armv7-shield]
+![Supports amd64 Architecture][amd64-shield]
+![Supports arm64/aarch64 Architecture][arm64-shield]
 
-## 📢 Attention! 📢
+Run InvoiceShelf in production with the official image, nginx, and PHP-FPM.
+The supplied Compose examples follow InvoiceShelf's recommended production
+configuration.
 
-For those that are using InvoiceShelf docker, as of **01 Sep, 2025** we made some changes to the docker image:
+> This image is for operators and end users. If you are developing InvoiceShelf,
+> use the main [InvoiceShelf repository](https://github.com/InvoiceShelf/InvoiceShelf)
+> and its development Docker environment instead.
 
-[[Full upgrade guide]](https://github.com/InvoiceShelf/docker/blob/master/upgrade-guide.md)
+## Choose an image tag
 
-## Introduction
+Images are published on release. Choose the tag that matches the release stream
+you intend to run:
 
-This image features InvoiceShelf, nginx and PHP-FPM. The provided configuration (PHP, nginx...) follows InvoiceShelf's official recommendations and is meant to be used by end-users.
+- `:latest` — newest stable release, currently the v2 line.
+- `:2` / `:3` — newest stable release of a major version, once that major is stable.
+- `:2.4` / `:2.4.0` — newest stable patch of a minor version, or an exact version.
+- `:beta` — latest beta for the current stable line; not for production.
+- `:next` — newer-major prerelease; not for production.
+- `:3.0.0-beta.1` … — a pinned prerelease.
 
-**Important**: If you are a developer, please check the InvoiceShelf main repository and use the docker/development image for development.
+- Use `:latest` for the supported stable release, or pin a major (`:2`) or
+  exact version (`:2.4.0`) when you need tighter upgrade control.
+- Use `:beta` only to test an upcoming release in the stable major line. Use
+  `:next` to test the next major before it is stable.
+- `:latest` moves to a new major only after that major is released as stable.
+  A regular `docker compose pull` will not silently turn a stable 2.x
+  installation into an unreleased 3.x installation.
 
-## How tags work
+`:nightly` is transitional only. It currently points to the stable image so
+existing installations can migrate safely, but it will stop updating. Change it
+to `:latest`; `:nightly` is not a nightly build stream. See the
+[Docker upgrade guide](upgrade-guide.md) for migration details.
 
-Images are published **on release** (there are no nightly builds). The following tags are available:
+## Run with Docker Compose
 
-| Docker Tag | Points at | Updated |
-|---|---|---|
-| `:latest` | Newest stable release (currently the 2.x line) | On every stable release |
-| `:2` / `:3` | Newest release of that major | On every release of that major |
-| `:2.4` / `:2.4.0` | Newest patch of that minor / that exact version | On release |
-| `:beta` / `:next` | Newest 3.x pre-release (alpha/beta) — **not for production** | On every 3.x pre-release |
-| `:3.0.0-beta.1` … | A specific pre-release, pinned | On release |
+Use one of the included Compose files. SQLite has the smallest footprint and no
+separate database service; MySQL/MariaDB and PostgreSQL are available when you
+need an external database service.
 
-To summarize:
+1. Choose `docker-compose.sqlite.yml`, `docker-compose.mysql.yml`, or
+   `docker-compose.pgsql.yml`.
+2. Copy it to `docker-compose.yml` in a directory for this installation.
+3. Review and set the environment values, especially URLs, database credentials,
+   and passwords.
+4. Start it with `docker compose up -d`.
 
-- **Production (recommended):** use `:latest`, or pin a major (`:2`) or exact version (`:2.4.0`).
-- **Want to test 3.x early:** use `:beta` (or `:next`), knowing it is pre-release software.
-- `:latest` tracks the **2.x** stable line today and will move to **3.x** only once 3.0 is released
-  as stable — a 2.x→3.x major upgrade is never applied silently on a routine `docker compose pull`.
+The provided files use `invoiceshelf/invoiceshelf:latest`. Change the image tag
+before first start if you prefer a pinned major or exact version.
 
-> **Deprecated:** `:nightly` is going away (and `:alpha`/`:dev` were never actually published).
-> For a transition period `:nightly` is kept pointing at `:latest` so existing setups converge onto
-> stable; it will then stop updating. Switch `:nightly` → `:latest` (and `:alpha` → `:beta`). See the
-> [upgrade guide](https://github.com/InvoiceShelf/docker/blob/master/upgrade-guide.md).
+### Upgrade a Compose installation
 
-## Run with Docker Compose (Recommended)
+Docker images are already built; do not add `--build` when upgrading. From the
+directory containing your Compose file, pull the selected image and recreate the
+application with it:
 
-### 1. Docker-compose Usage
+```bash
+docker compose pull
+docker compose up -d
+```
 
-The recommended way to run InvoiceShelf is by using the provided docker-compose.yaml files within this repository.
+Your named volumes retain application data. You can remove unused image layers
+later with `docker image prune` if desired.
 
-If you like a small footprint and no external dependencies, you can use the `docker-compose.sqlite.yml` file. By using SQLite you don't run a database server, and your database is easily portable with the _database.sqlite_ file.
-
-The desired workflow is basically as follows:
-
-1. Decide which database you want to use (sqlite, mysql, postgresql).
-2. Copy the docker-compose file. E.g., for SQLite you need to copy  `docker-compose.sqlite.yml` to `docker-compose.yml`
-3. Change the environment variables to reflect your desired setup
-4. Execute `docker compose up` to run it, and `docker compose down` to shut down
-
-### 2. Docker-compose Upgrade
-
-Once a new version of InvoiceShelf is released, we also release a new Docker image.
-
-To pull the latest version, you need to spin down, pull, rebuild and spin up again.
-
-1. Shut down your current environment:
-   `docker compose down`
-2. Pull the latest image version:
-   `docker compose pull`
-3. Start and rebuild:
-   `docker compose up --force-recreate --build -d`
-4. Prune/clean up the old/unused images:
-   `docker image prune`
-
-### 3. Docker-compose Image Tags
-
-By default, all the provided docker-compose.{db}.yaml files use the `:latest` tag, which tracks the
-newest stable release. For a more predictable production setup, pin a major (`:2`) or an exact
-version (`:2.4.0`) instead.
-
-For more details see: [How tags work](#how-tags-work) section.
+The in-app updater is disabled in Docker. Update Docker installations through
+the image tag and Compose commands above, rather than from the InvoiceShelf user
+interface.
 
 ## Run with Docker
 
 To use the built-in SQLite, no external dependencies are required. At its simplest:
 
-```bash  
+```bash
 docker run -d \
     --name=invoiceshelf \
     -v ./invoiceshelf/storage:/var/www/html/storage \
+    -v ./invoiceshelf/modules:/var/www/html/Modules \
     -e APP_NAME=InvoiceShelf \
     -e APP_ENV=production \
     -e APP_DEBUG=false \
     -e APP_URL=http://localhost:8090 \
     -e DB_CONNECTION=sqlite \
-    -e DB_DATABASE=/var/www/html/database/database.sqlite \
+    -e DB_DATABASE=/var/www/html/storage/app/database.sqlite \
     -e CACHE_STORE=file \
     -e SESSION_DRIVER=file \
     -e SESSION_LIFETIME=240 \
@@ -98,14 +94,18 @@ docker run -d \
     invoiceshelf/invoiceshelf:latest
 ```
 
-This will start the InvoiceShelf instance on port 8090. The data will be persisted in ./invoiceshelf/storage for the `storage` directory and `./invoiceshelf/database` for the SQLite database.
+This starts InvoiceShelf on port 8090. The mounted `./invoiceshelf/storage`
+directory persists the application storage and SQLite database at
+`storage/app/database.sqlite`.
 
 ## Advanced configuration
 
-InvoiceShelf images are built on top of the `serversideup/php` image. 
+InvoiceShelf images are built on top of the `serversideup/php` image. This
+preserves the image's standard PHP, nginx, and PHP-FPM architecture while
+allowing its supported runtime configuration.
 
-For more advanced configuration, please refer to the [serversideup/php](https://github.com/serversideup/docker-php) repository.
+For advanced configuration, refer to the
+[serversideup/php documentation](https://github.com/serversideup/docker-php).
 
 [arm64-shield]: https://img.shields.io/badge/arm64-yes-success.svg?style=flat
 [amd64-shield]: https://img.shields.io/badge/amd64-yes-success.svg?style=flat
-[armv7-shield]: https://img.shields.io/badge/armv7-yes-success.svg?style=flat

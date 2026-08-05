@@ -8,8 +8,8 @@ and the tag scheme is simpler and safer for production:
 - `:latest` — newest **stable** release (the 2.x line today). The provided `docker-compose.*.yml`
   files now default to `:latest`.
 - `:2` / `:2.4` / `:2.4.0` — pin a major / minor / exact version for a predictable setup.
-- `:beta` / `:next` — newest **3.x pre-release**, for testing the next major early. Not for
-  production, and it never moves `:latest`.
+- `:beta` — newest beta of the current stable major; not for production.
+- `:next` — newest pre-release of the next major (currently 3.x); not for production.
 
 `:latest` will move from 2.x to 3.x **only when 3.0 is released as stable** — a major upgrade is
 never applied silently on a routine `docker compose pull`.
@@ -21,7 +21,7 @@ never applied silently on a routine `docker compose pull`.
   change anything right away you will converge onto stable on your next `docker compose pull`.
   **`:nightly` will eventually stop updating** — please migrate.
 - **If you used `:alpha` or `:dev`:** those were documented but never actually published. Use
-  `:beta` if you want to track the next major (3.x) early.
+  `:next` if you want to track the next major (3.x) early.
 
 ```yaml
 services:
@@ -31,7 +31,7 @@ services:
 
 ```bash
 docker compose pull
-docker compose up --force-recreate --build -d
+docker compose up -d --force-recreate
 ```
 
 > The in-app updater is disabled inside Docker — containers upgrade with `docker compose pull`,
