@@ -47,6 +47,13 @@ services:
       # REF: https://github.com/InvoiceShelf/InvoiceShelf/issues/213#issuecomment-3026790543
       - SANCTUM_STATEFUL_DOMAINS=localhost:8090
 
+      # The container runs Laravel's scheduler itself, which is what creates
+      # recurring invoices, flags invoices overdue and expires estimates. Set
+      # this to false only if you drive the schedule from elsewhere, such as a
+      # second container running `php artisan schedule:work`, or if you run
+      # more than one replica and want exactly one of them scheduling.
+      # - SCHEDULER_ENABLED=true
+
       - DB_CONNECTION=pgsql
       - DB_HOST=database
       - DB_PORT=5432
