@@ -98,6 +98,20 @@ This starts InvoiceShelf on port 8090. The mounted `./invoiceshelf/storage`
 directory persists the application storage and SQLite database at
 `storage/app/database.sqlite`.
 
+## Scheduled work
+
+The container runs Laravel's scheduler itself, supervised alongside the web
+server. That is what creates recurring invoices, flags invoices overdue and
+expires estimates, so there is nothing to add to the host's crontab.
+
+Images published before this was added ran no scheduler at all. If recurring
+invoices have never appeared on your install, pull a current image.
+
+Set `SCHEDULER_ENABLED=false` only if you drive the schedule from elsewhere,
+for example a second container started with
+`command: ["php", "/var/www/html/artisan", "schedule:work"]`, or if you run more
+than one replica and want exactly one of them scheduling.
+
 ## Advanced configuration
 
 InvoiceShelf images are built on top of the `serversideup/php` image. This
