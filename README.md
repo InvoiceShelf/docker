@@ -3,6 +3,16 @@
 ![Supports amd64 Architecture][amd64-shield]
 ![Supports arm64/aarch64 Architecture][arm64-shield]
 
+> [!IMPORTANT]
+> **Security update, 21 October 2026: upgrade to 2.4.7.** PHP fixed CVE-2026-109618 and
+> CVE-2026-109619, which allow remote code execution without signing in. Images up to
+> 2.4.6 run the affected PHP 8.4.25; `2.4.7` (also `:latest`, `:2` and `:2.4`) runs
+> PHP 8.4.27. Run `docker compose pull && docker compose up -d`, then check that
+> `docker compose exec webapp php -v` says 8.4.27. If you build the image yourself,
+> rebuild it from the 2.4.7 source. 3.x testers: `3.0.0-alpha.11` (`:next`) runs PHP 8.5.12.
+> [Release notes](https://github.com/InvoiceShelf/InvoiceShelf/releases/tag/2.4.7) ·
+> [Announcement](https://github.com/InvoiceShelf/InvoiceShelf/discussions/927)
+
 Run InvoiceShelf in production with the official image, nginx, and PHP-FPM.
 The supplied Compose examples follow InvoiceShelf's recommended production
 configuration.
