@@ -1,0 +1,67 @@
+services:
+  webapp:
+    image: invoiceshelf/invoiceshelf:latest
+    container_name: invoiceshelf-variant-sqlite
+    expose:
+      - 8080
+    volumes:
+      - invoiceshelf_storage:/var/www/html/storage/
+      - invoiceshelf_modules:/var/www/html/Modules/
+    networks:
+      - invoiceshelf
+    environment:
+      - APP_NAME=InvoiceShelf
+      - APP_ENV=production
+      - APP_DEBUG=false
+      
+      # APP_URL should have:
+      # 1. Protocol http or https if you are accessing it via reverse proxy with
+      #    SSL, then it will be https, if via local IP, then http.
+      # 2. IP address of the server or the domain name
+      # 3. (optional) If you are using a custom port such as :8080 or another.
+      # REF: https://github.com/InvoiceShelf/InvoiceShelf/issues/213#issuecomment-3026790543
+      - APP_URL=http://localhost:8090
+
+      # SESSION_DOMAIN should have:
+      # 1. IP address of the server or the domain name
+      # 2. (optional) If you are using a custom port such as :8080 or another.
+      # REF: https://github.com/InvoiceShelf/InvoiceShelf/issues/213#issuecomment-3026790543
+      - SESSION_DOMAIN=localhost
+
+      # SANCTUM_STATEFUL_DOMAINS should have:
+      # 1. IP address of the server or the domain name
+      #    1.1 (optional) If you are using a custom port such as :8080 or another.
+      # 2. (optional) If you are planning to access the application from different
+      #    domains, you must add a comma between each domain
+      # REF: https://github.com/InvoiceShelf/InvoiceShelf/issues/213#issuecomment-3026790543
+      - SANCTUM_STATEFUL_DOMAINS=localhost:8090
+      
+      - DB_CONNECTION=sqlite
+      - DB_DATABASE=/var/www/html/storage/app/database.sqlite # ❌️📝 PLEASE DON'T EDIT THIS LINE - unless you know what you are doing
+      - CACHE_STORE=file
+      - SESSION_DRIVER=file
+      - SESSION_LIFETIME=240
+      - AUTORUN_ENABLED=true
+      - AUTORUN_LARAVEL_MIGRATION=false
+      - AUTORUN_LARAVEL_OPTIMIZE=false
+      - PHP_OPCACHE_ENABLE=1
+      
+      - PDF_DRIVER=gotenberg
+      - GOTENBERG_HOST=http://gotenberg:3000
+      - GOTENBERG_ALLOWED_PRIVATE_HOST=http://gotenberg:3000
+    restart: unless-stopped
+    depends_on:
+      - gotenberg
+  gotenberg:
+    image: 'gotenberg/gotenberg:8'
+    container_name: invoiceshelf-gotenberg
+    expose:
+      - 3000
+    networks:
+      - invoiceshelf
+    restart: unless-stopped
+networks:
+  invoiceshelf:
+volumes:
+  invoiceshelf_storage:
+  invoiceshelf_modules:
